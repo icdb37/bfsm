@@ -130,7 +130,7 @@ func TestSqliteQuery(t *testing.T) {
 	}
 	data := []*demo{}
 	qf := store.NewFilter()
-	if err := col.Query(ctx, qf, data); err != nil {
+	if err := col.Query(ctx, qf, &data); err != nil {
 		t.Fatal("query infos failed", "error", err)
 	}
 	if data[0].Name != info.Name {

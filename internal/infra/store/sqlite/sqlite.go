@@ -11,7 +11,7 @@ import (
 	"github.com/icdb37/bfsm/internal/infra/config"
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	"github.com/icdb37/bfsm/internal/infra/store"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 	"xorm.io/xorm"
 )
 
@@ -36,7 +36,7 @@ func Init() error {
 	filename := filepath.Join(cfg.Path, cfg.Name+".db")
 	os.MkdirAll(filepath.Dir(filename), os.ModePerm) //nolint
 	var err error
-	gDbe, err = xorm.NewEngine("sqlite3", filename)
+	gDbe, err = xorm.NewEngine("sqlite", filename)
 	if err != nil {
 		return err
 	}
