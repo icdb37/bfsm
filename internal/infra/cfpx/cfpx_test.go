@@ -22,39 +22,46 @@ func TestParseValue(t *testing.T) {
 }
 
 func TestCheckLt(t *testing.T) {
-	pn := &node{
-		name: "age",
-		desc: "年龄",
-		val:  "70",
+	pn := &Param{
+		Code: "age",
+		Desc: "年龄",
+		Val:  "70",
 	}
 	v1 := 20
 	tv := reflect.ValueOf(&v1)
-	if err := checkLt(&tv, nil, pn); err != nil {
+	if err := checkLt(&tv, pn); err != nil {
 		t.Fatal(err)
 	}
 	v1 = 100
-	if err := checkLt(&tv, nil, pn); err == nil {
+	if err := checkLt(&tv, pn); err == nil {
 		t.Fatal("100 < 70 check fail")
 	}
 	v2 := []int{10, 20, 30}
 	tv = reflect.ValueOf(&v2)
-	if err := checkLt(&tv, nil, pn); err != nil {
+	if err := checkLt(&tv, pn); err != nil {
 		t.Fatal(err)
 	}
 	v2 = []int{30, 40, 80}
 	tv = reflect.ValueOf(&v2)
-	if err := checkLt(&tv, nil, pn); err == nil {
+	if err := checkLt(&tv, pn); err == nil {
 		t.Fatal("age [30, 40, 80] must be less 70 check fail")
 	}
 }
 
 type demoPersion struct {
-	Name      string    `cfpx:"name=名称,fmtfn=trim"`
-	Age       int       `cfpx:"age=年龄,check=lt:200"`
-	CreatedAt time.Time `cfpx:"created_at=创建,fmtfn=nowdt"`
+	Name      string    `cfpx:"field=code:name|desc:名称,fmtfn=trim"`
+	Age       int       `cfpx:"field=code:age|desc:年龄,check=lt:200"`
+	CreatedAt time.Time `cfpx:"field=code:created_at|desc:创建,fmtfn=nowdt"`
+	feature   string
+}
+
+func (d *demoPersion) GetFeature() string {
+	return d.feature
 }
 
 func TestFmtfnOps(t *testing.T) {
+	pService = &service{}
+	pService.load("./config.yaml")
 	info := &demoPersion{
 		Name: " aaa \t",
 		Age:  100,

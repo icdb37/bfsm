@@ -1,1 +1,2 @@
 DATABASE_PATH: "bfsm/dbx/"
+CONFIG_CFPX_FILE: "./config-cfpx.yaml"

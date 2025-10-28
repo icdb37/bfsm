@@ -1,0 +1,52 @@
+_default_:
+  name: "_default_"
+  desc: "默认"
+  item:
+    name:
+      name: "name"
+      desc: "名称"
+      process:
+        - kind: fmtfn
+          op: "trim"
+          val: ""
+        - kind: check
+          op: "range"
+          val: "2,20"
+    age:
+      name: "age"
+      desc: "用户年龄"
+      process:
+        - kind: check
+          op: "lt"
+          val: "200"
+user:
+  name: "user"
+  desc: "用户"
+  item:
+    name:
+      name: "name"
+      desc: "用户名称"
+      process:
+        - kind: fmtfn
+          op: "trimr"
+          val: ""
+        - kind: check
+          op: "range"
+          val: "2,20"
+    desc:
+      name: "desc"
+      desc: "用户描述"
+      process:
+        - kind: fmtfn
+          op: "trim"
+          val: ""
+        - kind: check
+          op: "lt"
+          val: "200"
+    age:
+      name: "age"
+      desc: "用户年龄"
+      process:
+        - kind: check
+          op: "lt"
+          val: "100"

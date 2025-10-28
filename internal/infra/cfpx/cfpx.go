@@ -3,18 +3,27 @@ package cfpx
 
 import (
 	"reflect"
-	"strings"
 	"time"
 )
+
+/*
+示例：
+ {tag},cfpx:"field=code:{tag}|desc:测试,fmtfn=trim|lower,check=in:1,2,3|minlen:3"
+*/
 
 const (
 	keyFmtfn = "fmtfn" // 数据格式化
 	keyCheck = "check" // 数据校验
+	keyField = "field" // 字段信息
 )
 
-type fFmtfn = func(pv *reflect.Value)
-type fCheck = func(pv *reflect.Value, pf *field, pn *node) error
+// 数据描述
+const (
+	OpFieldCode = "code"
+	OpFieldDesc = "desc"
+)
 
+// 数据格式化操作
 const (
 	OpFmtfnTriml = "triml" // 左去空格
 	OpFmtfnTrimr = "trimr" // 右去空格
@@ -24,18 +33,7 @@ const (
 	OpFmtfnNowdt = "nowdt" // 当前时间
 )
 
-var (
-	typeTime = reflect.TypeOf(time.Time{})
-	fmtfnOps = map[string]fFmtfn{
-		OpFmtfnTriml: fmtfnTriml,
-		OpFmtfnTrimr: fmtfnTrimr,
-		OpFmtfnTrim:  fmtfnTrim,
-		OpFmtfnLower: fmtfnLower,
-		OpFmtfnUpper: fmtfnUpper,
-		OpFmtfnNowdt: fmtfnNowdt,
-	}
-)
-
+// 数据校验操作
 const (
 	OpCheckEq    = "eq"    // 等于
 	OpCheckLt    = "lt"    // 小于
@@ -45,6 +43,21 @@ const (
 	OpCheckIn    = "in"    // 包含
 	OpCheckRegex = "regex" // 正则匹配，值使用base64格式
 	OpCheckRange = "range" // 范围
+)
+
+type fFmtfn = func(pv *reflect.Value)
+type fCheck = func(pv *reflect.Value, pn *Param) error
+
+var (
+	typeTime = reflect.TypeOf(time.Time{})
+	fmtfnOps = map[string]fFmtfn{
+		OpFmtfnTrim:  fmtfnTrim,
+		OpFmtfnTriml: fmtfnTriml,
+		OpFmtfnTrimr: fmtfnTrimr,
+		OpFmtfnLower: fmtfnLower,
+		OpFmtfnUpper: fmtfnUpper,
+		OpFmtfnNowdt: fmtfnNowdt,
+	}
 )
 
 var (
@@ -60,170 +73,62 @@ var (
 	}
 )
 
-/*
-示例：
- {tag},cfpx:"fmtfn=trim|lower,check=in:1,2,3|minlen:3"
-*/
-
-type field struct {
-	name string
+// Unit 处理单元
+type Unit struct {
+	Kind string `json:"kind" yaml:"kind"`
+	Op   string `json:"op" yaml:"op"`
+	Val  string `json:"val" yaml:"val"`
 }
 
-type node struct {
-	name string
-	desc string
-	opx  string
-	val  string
+// Elem 处理节点
+type Elem struct {
+	Code    string  `json:"code" yaml:"code"`
+	Desc    string  `json:"desc" yaml:"desc"`
+	Process []*Unit `json:"process" yaml:"process"`
 }
 
-func parseCheckNode(s string, beg, end int) (ns []*node) {
-	if beg == -1 {
-		return
-	}
-	s = s[beg+len(keyCheck) : end]
-	if s[beg] != ' ' && s[beg] != '=' {
-		return
-	}
-	s = strings.Trim(s, " =")
-	s = strings.TrimSpace(s)
-	if len(s) == 0 {
-		return
-	}
-	fields := strings.Split(s, "|")
-	for _, field := range fields {
-		field = strings.TrimSpace(field)
-		if len(field) == 0 {
-			continue
-		}
-		kvs := strings.Split(field, ":")
-		pn := &node{}
-		for i, pnv := range []*string{&pn.opx, &pn.val} {
-			if i >= len(kvs) {
-				break
-			}
-			*pnv = kvs[i]
-		}
-		pn.opx = strings.ToLower(pn.opx)
-		if _, ok := checkOps[pn.opx]; !ok {
-			continue
-		}
-		ns = append(ns, pn)
-	}
-	return ns
-}
-
-func parseFmtfnNode(s string, beg, end int) (ns []*node) {
-	if beg == -1 {
-		return
-	}
-	s = s[beg+len(keyFmtfn) : end]
-	if s[beg] != ' ' && s[beg] != '=' {
-		return
-	}
-	s = strings.Trim(s, " =")
-	s = strings.TrimSpace(s)
-	if len(s) == 0 {
-		return
-	}
-	fields := strings.Split(s, "|")
-	for _, field := range fields {
-		field = strings.TrimSpace(field)
-		if len(field) == 0 {
-			continue
-		}
-		kvs := strings.Split(field, ":")
-		pn := &node{}
-		for i, pnv := range []*string{&pn.opx, &pn.val} {
-			if i >= len(kvs) {
-				break
-			}
-			*pnv = kvs[i]
-		}
-		pn.opx = strings.ToLower(pn.opx)
-		if _, ok := fmtfnOps[pn.opx]; !ok {
-			continue
-		}
-		ns = append(ns, pn)
-	}
-	return ns
-}
-
-func parseNodes(tag string) (fmtfns []*node, checks []*node) {
-	name := ""
-	desc := ""
-	if pos := strings.Index(tag, ","); pos != -1 {
-		name = strings.TrimSpace(tag[:pos])
-		tag = tag[pos+1:]
-		if pos = strings.Index(name, "="); pos != -1 {
-			desc = strings.TrimSpace(name[pos+1:])
-			name = strings.TrimSpace(name[:pos])
-		} else {
-			desc = name
-		}
-	}
-	tag = strings.TrimSpace(tag)
-	size := len(tag)
-	begFmtfn := strings.Index(tag, keyFmtfn)
-	begCheck := strings.Index(tag, keyCheck)
-	endFmtfn, endCheck := size, size
-	if begCheck != -1 && begFmtfn != -1 && begCheck > begFmtfn {
-		endFmtfn = begCheck
-	}
-	if begCheck != -1 && begFmtfn != -1 && begFmtfn > begCheck {
-		endCheck = begFmtfn
-	}
-	fmtfns = parseFmtfnNode(tag, begFmtfn, endFmtfn)
-	checks = parseCheckNode(tag, begCheck, endCheck)
-	for _, n := range fmtfns {
-		n.name = name
-		n.desc = desc
-	}
-	for _, n := range checks {
-		n.name = name
-		n.desc = desc
-	}
-	return
+type Param struct {
+	Code string `json:"code" yaml:"code"`
+	Desc string `json:"desc" yaml:"desc"`
+	Val  string `json:"val" yaml:"val"`
 }
 
 // Process 数据格式化，字段校验
-func Process(param any) error {
-	v := reflect.ValueOf(param)
-	if v.Kind() != reflect.Ptr {
+func Process(param Featurer) error {
+	return pService.Process(param)
+}
+
+func processFmtfn(pv *reflect.Value, pn *Elem) error {
+	if pn == nil {
 		return nil
 	}
-	v = v.Elem()
-	if v.Kind() != reflect.Struct {
+	for _, p := range pn.Process {
+		if p.Kind != keyFmtfn {
+			continue
+		}
+		pf, ok := fmtfnOps[p.Op]
+		if !ok {
+			continue
+		}
+		pf(pv)
+	}
+	return nil
+}
+
+func processCheck(pv *reflect.Value, pn *Elem) error {
+	if pn == nil {
 		return nil
 	}
-	// 遍历结构体字段
-	for i := 0; i < v.NumField(); i++ {
-		iv := v.Field(i)
-		f := v.Type().Field(i)
-		if f.Anonymous {
+	for _, p := range pn.Process {
+		if p.Kind != keyCheck {
 			continue
 		}
-		// 检查是否有 cfpx 标签
-		tag := f.Tag.Get("cfpx")
-		if tag == "" {
+		pf, ok := checkOps[p.Op]
+		if !ok {
 			continue
 		}
-		tag = strings.TrimSpace(tag)
-		fmtfns, checks := parseNodes(tag)
-		for _, n := range fmtfns {
-			pf, ok := fmtfnOps[n.opx]
-			if !ok {
-				continue
-			}
-			pf(&iv)
-		}
-		for _, n := range checks {
-			pf, ok := checkOps[n.opx]
-			if !ok {
-				continue
-			}
-			if err := pf(&iv, &field{name: f.Name}, n); err != nil {
-				return err
-			}
+		if err := pf(pv, &Param{Code: pn.Code, Desc: pn.Desc, Val: p.Val}); err != nil {
+			return err
 		}
 	}
 	return nil

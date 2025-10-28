@@ -10,6 +10,7 @@ var vp = viper.New()
 const (
 	KeyDatabase = "INFRA_DATABASE"
 	KeyLogx     = "INFRA_LOGX"
+	KeyCfpx     = "INFRA_CFPX"
 )
 
 // GetDatabase 数据库配置
@@ -25,4 +26,8 @@ func GetLogx() string {
 // SetConfig 设置配置
 func SetConfig(key string, val string) {
 	vp.Set(key, val)
+}
+
+func GetCfpx() string {
+	return vp.GetString(KeyCfpx)
 }
