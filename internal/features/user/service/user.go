@@ -3,7 +3,6 @@ package service
 
 import (
 	"context"
-	"errors"
 
 	"github.com/icdb37/bfsm/internal/constx/field"
 	"github.com/icdb37/bfsm/internal/features/user/model"
@@ -65,13 +64,10 @@ func (u *UserServer) DeleteUser(ctx context.Context, id string) error {
 
 // 获取用户
 func (u *UserServer) GetUser(ctx context.Context, id string) (*model.EntireUser, error) {
-	user := []*model.EntireUser{}
-	if err := u.repo.Query(ctx, store.NewFilter().Eq(field.ID, id), &user); err != nil {
+	info := &model.EntireUser{}
+	if err := u.repo.Query(ctx, store.NewFilter().Eq(field.ID, id), info); err != nil {
 		logx.Error("get user failed", "error", err)
 		return nil, err
 	}
-	if len(user) == 0 {
-		return nil, errors.New("user not found")
-	}
-	return user[0], nil
+	return info, nil
 }

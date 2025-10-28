@@ -1,0 +1,86 @@
+package service
+
+import (
+	"context"
+
+	"github.com/icdb37/bfsm/internal/constx/field"
+	"github.com/icdb37/bfsm/internal/features/company/model"
+	"github.com/icdb37/bfsm/internal/infra/errx"
+	"github.com/icdb37/bfsm/internal/infra/logx"
+	"github.com/icdb37/bfsm/internal/infra/store"
+	coModel "github.com/icdb37/bfsm/internal/model"
+	"github.com/icdb37/bfsm/internal/utils"
+)
+
+// 企业下的商品服务接口
+
+type commodityImpl struct {
+	repo store.Tabler
+}
+
+// Search 搜索商品
+func (c *commodityImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCommodity]) (resp *coModel.SearchResponse[model.EntireCommodity], err error) {
+	qf := store.Unmarshal(req.Query)
+	resp = &coModel.SearchResponse[model.EntireCommodity]{}
+	pf := req.GetPage()
+	if resp.Total, err = c.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+		logx.Error("search companies failed", "error", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+// Get 获取商品
+func (c *commodityImpl) Get(ctx context.Context, id string) (*model.EntireCommodity, error) {
+	info := &model.EntireCommodity{}
+	if err := c.repo.Query(ctx, store.NewFilter().Eq(field.ID, id), info); err != nil {
+		logx.Error("get commodity failed", "error", err)
+		return nil, err
+	}
+	if info.ID == "" {
+		logx.Error("get commodity failed", "error", "commodity not found", "id", id)
+		return nil, errx.NewNexist("商品不存在")
+	}
+	return info, nil
+}
+
+// Create 创建商品
+func (c *commodityImpl) Create(ctx context.Context, info *model.EntireCommodity) error {
+	logx.Info("create commodity", "info", info)
+	if err := utils.ProcessAll(ctx, info, processCommodityCreate); err != nil {
+		logx.Error("create commodity failed", "error", err)
+		return err
+	}
+	if err := c.repo.Insert(ctx, info); err != nil {
+		logx.Error("create commodity failed", "error", err)
+		return err
+	}
+	return nil
+}
+
+// Update 更新商品
+func (c *commodityImpl) Update(ctx context.Context, info *model.EntireCommodity) error {
+	logx.Info("update commodity", "info", info)
+	if err := utils.ProcessAll(ctx, info, processCommodityUpdate); err != nil {
+		logx.Error("update commodity failed", "error", err)
+		return err
+	}
+	where := store.NewFilter().Eq(field.ID, info.ID)
+	if err := c.repo.Update(ctx, where, info); err != nil {
+		logx.Error("update commodity failed", "error", err)
+		return err
+	}
+	return nil
+}
+
+// Delete 删除商品
+func (c *commodityImpl) Delete(ctx context.Context, id string) error {
+	logx.Info("delete commodity", "id", id)
+	where := store.NewFilter().
+		Eq(field.ID, id)
+	if err := c.repo.Delete(ctx, where); err != nil {
+		logx.Error("delete commodity failed", "error", err)
+		return err
+	}
+	return nil
+}

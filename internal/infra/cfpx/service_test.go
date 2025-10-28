@@ -8,7 +8,7 @@ import (
 func TestUserConfig(t *testing.T) {
 	s := &service{}
 	s.load("./config.yaml")
-	if len(s.items) == 0 {
+	if len(s.itemFeature.Item) == 0 {
 		t.Fatal("items is nil")
 	}
 	info := &demoPersion{
@@ -31,7 +31,7 @@ func TestUserConfig(t *testing.T) {
 func TestDefaultConfig(t *testing.T) {
 	s := &service{}
 	s.load("./config.yaml")
-	if len(s.items) == 0 {
+	if len(s.itemFeature.Item) == 0 {
 		t.Fatal("items is nil")
 	}
 	info := &demoPersion{

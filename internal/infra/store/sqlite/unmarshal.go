@@ -299,6 +299,10 @@ func parseCondStruct(key string, pv *reflect.Value) []builder.Cond {
 		if tag == nil {
 			continue
 		}
+		if tag.Op == "" || tag.Op == "-" || tag.Field == "-" {
+			conds = append(conds, parseCondStruct(key, &tvv)...)
+			continue
+		}
 		if tvv.IsZero() && tag.Omitempty {
 			continue
 		}

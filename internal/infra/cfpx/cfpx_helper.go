@@ -81,11 +81,10 @@ func parseTagUnit(s string) []*Unit {
 	return us
 }
 
-func parseTagElem(s string) *Elem {
-	e := &Elem{
-		Code: s,
-		Desc: s,
-	}
+func parseTagElem(s string) *Item {
+	e := &Item{Item: map[string]*Item{}}
+	e.Code = s
+	e.Desc = s
 	ts := strings.Split(s, ",")
 	for _, t := range ts {
 		pos := strings.Index(t, "=")
@@ -464,7 +463,7 @@ func checkRegex(pv *reflect.Value, pn *Param) error {
 	switch pv.Kind() {
 	case reflect.String:
 		pattern, err := base64.StdEncoding.DecodeString(pn.Val)
-		if err == nil {
+		if err != nil {
 			pattern = []byte(pn.Val)
 		}
 		re, err := regexp.Compile(string(pattern))
@@ -482,7 +481,6 @@ func checkRegex(pv *reflect.Value, pn *Param) error {
 			}
 		}
 	}
-
 	return nil
 }
 

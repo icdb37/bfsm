@@ -56,9 +56,13 @@ go-generate:
 
 build-debug:
 	@$(ECHO) "Will build on "$(BUILD_PATH)
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -gcflags='all=-N -l' -v -o $(BUILD_PATH)/bin/${MODULE} $(ROOT_PACKAGE)
+	CGO_ENABLED=0 GOARCH=amd64 GO111MODULE=on go build -a -gcflags='all=-N -l' -v -o $(BUILD_PATH)/bin/${MODULE} $(ROOT_PACKAGE)
 
 build:
+	@$(ECHO) "Will build on "$(BUILD_PATH)
+	CGO_ENABLED=0 GOARCH=amd64 GO111MODULE=on go build -a -ldflags "-w -s" -v -o $(BUILD_PATH)/bin/${MODULE} $(ROOT_PACKAGE)
+
+build-amd64:
 	@$(ECHO) "Will build on "$(BUILD_PATH)
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -ldflags "-w -s" -v -o $(BUILD_PATH)/bin/linux/amd64/${MODULE} $(ROOT_PACKAGE)
 

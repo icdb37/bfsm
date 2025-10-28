@@ -9,24 +9,29 @@ import (
 	"github.com/icdb37/bfsm/internal/utils"
 )
 
+const (
+	// TableUser 用户表名
+	TableUser = "user"
+)
+
 // EntireUser 完整用户信息
 type EntireUser struct {
-	Xid       uint32               `json:"xid" xorm:"pk autoincr 'xid'"`
-	ID        string               `json:"id" xorm:" unique not null 'id'"`
-	Name      string               `json:"name"  xorm:"varchar(30) 'name'"`
-	Desc      string               `json:"desc"  xorm:"varchar(100) 'desc'"`
-	Password  string               `json:"password" xorm:"varchar(30) 'password'"`
-	Phone     string               `json:"phone" xorm:"varchar(11) 'phone'"`
-	IC        coModel.IdentityCard `json:"ic" xorm:"json 'ic'"`
-	BC        coModel.BankCard     `json:"bc" xorm:"json 'bc'"`
-	Tags      []coModel.Tag        `json:"tags" xorm:"json 'tags'"`
-	Contacts  []coModel.Contact    `json:"contacts" xorm:"json 'contacts'"`
-	CreatedAt time.Time            `json:"created_at" xorm:"created 'created_at'"`
-	UpdatedAt time.Time            `json:"updated_at" xorm:"updated 'updated_at'"`
+	Xid       uint32                `json:"xid" xorm:"pk autoincr 'xid'"`
+	ID        string                `json:"id" xorm:"char(36) unique not null 'id'"`
+	Name      string                `json:"name"  xorm:"varchar(30) 'name'"`
+	Desc      string                `json:"desc"  xorm:"varchar(100) 'desc'"`
+	Password  string                `json:"password" xorm:"varchar(30) 'password'"`
+	Phone     string                `json:"phone" xorm:"varchar(11) 'phone'"`
+	IC        *coModel.IdentityCard `json:"ic" xorm:"json 'ic'"`
+	BC        *coModel.BankCard     `json:"bc" xorm:"json 'bc'"`
+	Tags      []*coModel.Tag        `json:"tags" xorm:"json 'tags'"`
+	Contacts  []*coModel.Contact    `json:"contacts" xorm:"json 'contacts'"`
+	CreatedAt time.Time             `json:"created_at" xorm:"created 'created_at'"`
+	UpdatedAt time.Time             `json:"updated_at" xorm:"updated 'updated_at'"`
 }
 
 func (u *EntireUser) TableName() string {
-	return "users"
+	return TableUser
 }
 
 // Normalize 标准化用户信息

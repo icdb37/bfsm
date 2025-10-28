@@ -10,7 +10,8 @@ var vp = viper.New()
 const (
 	KeyDatabase = "INFRA_DATABASE"
 	KeyLogx     = "INFRA_LOGX"
-	KeyCfpx     = "INFRA_CFPX"
+	KeyCfpx     = "INFRA_CFPX_FILE"
+	KeyEndpoint = "ENDPOINT"
 )
 
 // GetDatabase 数据库配置
@@ -30,4 +31,13 @@ func SetConfig(key string, val string) {
 
 func GetCfpx() string {
 	return vp.GetString(KeyCfpx)
+}
+
+// GetEndpoint 获取服务端地址
+func GetEndpoint() string {
+	endpoint := vp.GetString(KeyEndpoint)
+	if endpoint == "" {
+		endpoint = ":8080"
+	}
+	return endpoint
 }

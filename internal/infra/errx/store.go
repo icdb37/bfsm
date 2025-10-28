@@ -21,3 +21,39 @@ func Store(format string, args ...any) *ErrStore {
 		Message: fmt.Sprintf(format, args...),
 	}
 }
+
+// ErrCfpx cfpx校验异常
+type ErrCfpx struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
+
+// NewCfpx 创建cfpx校验异常
+func NewCfpx(field string, format string, args ...any) *ErrCfpx {
+	return &ErrCfpx{
+		Field:   field,
+		Message: fmt.Sprintf(format, args...),
+	}
+}
+
+// Error 实现 error 接口
+func (e *ErrCfpx) Error() string {
+	return e.Message
+}
+
+// NewNexist 创建资源不存在异常
+func NewNexist(format string, args ...any) *ErrNexist {
+	return &ErrNexist{
+		Message: fmt.Sprintf(format, args...),
+	}
+}
+
+// ErrNexist 资源不存在异常
+type ErrNexist struct {
+	Message string `json:"message"`
+}
+
+// Error 实现 error 接口
+func (e *ErrNexist) Error() string {
+	return e.Message
+}

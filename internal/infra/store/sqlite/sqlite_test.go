@@ -128,12 +128,12 @@ func TestSqliteQuery(t *testing.T) {
 	if err := col.Insert(ctx, info); err != nil {
 		t.Fatal("insert info failed", "error", err)
 	}
-	data := []*demo{}
+	data := demo{}
 	qf := store.NewFilter()
 	if err := col.Query(ctx, qf, &data); err != nil {
 		t.Fatal("query infos failed", "error", err)
 	}
-	if data[0].Name != info.Name {
+	if data.Name != info.Name {
 		t.Fatal("query infos failed", "data", data)
 	}
 }

@@ -1,30 +1,47 @@
 _default_:
-  name: "_default_"
+  code: "_default_"
   desc: "默认"
   item:
-    name:
-      name: "name"
-      desc: "名称"
-      process:
-        - kind: fmtfn
-          op: "trim"
-          val: ""
-        - kind: check
-          op: "range"
-          val: "2,20"
-    age:
-      name: "age"
-      desc: "用户年龄"
-      process:
-        - kind: check
-          op: "lt"
-          val: "200"
+    contact:
+      code: "contact"
+      desc: "联系方式"
+      item:
+        name:
+          code: "name"
+          desc: "联系人名称"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "range"
+              val: "2,20"
+        desc:
+          code: "desc"
+          desc: "联系人描述"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "lt"
+              val: "200"
+        phone:
+          code: "phone"
+          desc: "联系人手机号"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "regex"
+              val: "XjFbMy05XVxkezl9JA=="
 user:
-  name: "user"
+  code: "user"
   desc: "用户"
   item:
     name:
-      name: "name"
+      code: "name"
       desc: "用户名称"
       process:
         - kind: fmtfn
@@ -34,7 +51,7 @@ user:
           op: "range"
           val: "2,20"
     desc:
-      name: "desc"
+      code: "desc"
       desc: "描述"
       process:
         - kind: fmtfn
@@ -44,9 +61,87 @@ user:
           op: "lt"
           val: "200"
     age:
-      name: "age"
+      code: "age"
       desc: "用户年龄"
       process:
         - kind: check
           op: "lt"
           val: "100"
+company:
+  code: "company"
+  desc: "企业管理"
+  item:
+    company:
+      code: "company"
+      desc: "企业信息"
+      item:
+        name:
+          code: "name"
+          desc: "企业名称"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "range"
+              val: "2,20"
+        desc:
+          code: "desc"
+          desc: "企业描述"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "lt"
+              val: "200"
+    commodity:
+      code: "commodity"
+      desc: "企业商品"
+      item:
+        name:
+          code: "name"
+          desc: "商品名称"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "range"
+              val: "2,20"
+        desc:
+          code: "desc"
+          desc: "商品描述"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "lt"
+              val: "200"
+        spec:
+          code: "spec"
+          desc: "商品规格"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "lt"
+              val: "50"
+        size:
+          code: "size"
+          desc: "商品尺寸"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "lt"
+              val: "50"
+        updated_at:
+          code: "updated_at"
+          desc: "更新时间"
+          process:
+            - kind: fmtfn
+              op: "nowdt"

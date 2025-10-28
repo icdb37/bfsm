@@ -4,6 +4,8 @@ package cfpx
 import (
 	"reflect"
 	"time"
+
+	"github.com/icdb37/bfsm/internal/infra/errx"
 )
 
 /*
@@ -98,11 +100,11 @@ func Process(param Featurer) error {
 	return pService.Process(param)
 }
 
-func processFmtfn(pv *reflect.Value, pn *Elem) error {
-	if pn == nil {
+func processFmtfn(pv *reflect.Value, pi *Item) error {
+	if pi == nil {
 		return nil
 	}
-	for _, p := range pn.Process {
+	for _, p := range pi.Process {
 		if p.Kind != keyFmtfn {
 			continue
 		}
@@ -115,11 +117,11 @@ func processFmtfn(pv *reflect.Value, pn *Elem) error {
 	return nil
 }
 
-func processCheck(pv *reflect.Value, pn *Elem) error {
-	if pn == nil {
+func processCheck(pv *reflect.Value, pi *Item) error {
+	if pi == nil {
 		return nil
 	}
-	for _, p := range pn.Process {
+	for _, p := range pi.Process {
 		if p.Kind != keyCheck {
 			continue
 		}
@@ -127,8 +129,11 @@ func processCheck(pv *reflect.Value, pn *Elem) error {
 		if !ok {
 			continue
 		}
-		if err := pf(pv, &Param{Code: pn.Code, Desc: pn.Desc, Val: p.Val}); err != nil {
-			return err
+		if err := pf(pv, &Param{Code: pi.Code, Desc: pi.Desc, Val: p.Val}); err != nil {
+			return &errx.ErrCfpx{
+				Field:   pi.GetField(),
+				Message: err.Error(),
+			}
 		}
 	}
 	return nil

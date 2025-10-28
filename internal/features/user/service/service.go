@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 
+	"github.com/icdb37/bfsm/internal/constx/featc"
 	"github.com/icdb37/bfsm/internal/features/user/model"
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	"github.com/icdb37/bfsm/internal/infra/store"
+	"github.com/icdb37/bfsm/internal/wire"
 )
 
 // Server - 用户服务接口
@@ -25,4 +27,14 @@ func New() (Server, error) {
 		return nil, err
 	}
 	return &UserServer{repo: repo}, nil
+}
+
+func Provide() {
+	repo, err := store.NewTable(&model.EntireUser{})
+	if err != nil {
+		logx.Fatal("create user repo failed", "error", err)
+	}
+	wire.ProvideName(featc.User, func() Server {
+		return &UserServer{repo: repo}
+	})
 }

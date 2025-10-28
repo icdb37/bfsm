@@ -36,10 +36,10 @@ func (b *BankCard) Normalize() {
 	utils.PstrTrims(&b.No, &b.Name, &b.Bank)
 }
 
-// Contact 紧急联系人
+// Contact 联系人
 type Contact struct {
-	Name  string `json:"name" xorm:"varchar(50) 'name'" validate:"required"`
-	Phone string `json:"phone" xorm:"varchar(20) 'phone'" validate:"required"`
+	Name  string `json:"name" xorm:"varchar(50) 'name'" validate:"required" cfpx:"name"`
+	Phone string `json:"phone" xorm:"varchar(20) 'phone'" validate:"required" cfpx:"phone"`
 	Desc  string `json:"desc" xorm:"varchar(100) 'desc'"`
 }
 
@@ -61,4 +61,42 @@ type Tag struct {
 
 func (t *Tag) Normalize() {
 	utils.PstrTrims(&t.Category, &t.Value, &t.Color, &t.Shape)
+}
+
+// CommodityAttr 商品属性
+type CommodityAttr struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// Commodity 商品
+type Commodity struct {
+	Xid      uint32           `json:"xid" xorm:"pk autoincr 'xid'"`
+	ID       string           `json:"id" xorm:"varchar(50) unique not null 'id'"`
+	Name     string           `json:"name" xorm:"varchar(100) 'name'" validate:"required" cfpx:"name"`
+	Desc     string           `json:"desc" xorm:"varchar(200) 'desc'" validate:"required" cfpx:"desc"`
+	Spec     string           `json:"spec" xorm:"varchar(100) 'spec'" validate:"required" cfpx:"spec"`
+	Size     string           `json:"size" xorm:"varchar(100) 'size'" validate:"required" cfpx:"size"`
+	Validity uint16           `json:"validity" xorm:"tinyint 'validity'" validate:"required"`
+	Price    uint32           `json:"price" xorm:"int 'price'" validate:"required"`
+	Attrs    []*CommodityAttr `json:"attrs" xorm:"json 'attrs'"`
+}
+
+func (c *Commodity) Normalize() {
+	utils.PstrTrims(&c.Name, &c.Desc, &c.Spec, &c.Size)
+	for _, attr := range c.Attrs {
+		utils.PstrTrims(&attr.Name, &attr.Value)
+	}
+}
+
+// QueryCommodity - 查询商品
+type QueryCommodity struct {
+	// Name 姓名
+	Name string `json:"name" where:"regex,name,omitempty"`
+	// Desc 备注
+	Desc string `json:"desc" where:"regex,desc,omitempty"`
+	// Spec 规格
+	Spec string `json:"spec" where:"regex,spec,omitempty"`
+	// Size 尺寸
+	Size string `json:"size" where:"regex,size,omitempty"`
 }

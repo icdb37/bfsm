@@ -48,6 +48,8 @@ type Tabler interface {
 	Insert(ctx context.Context, vs ...any) error
 	// Upsert 更新数据
 	Upsert(ctx context.Context, w Filter, v any) error
+	// Update 修改数据
+	Update(ctx context.Context, w Filter, v any) error
 	// Delete 删除数据
 	Delete(ctx context.Context, w Filter) error
 	// CreateIndex 创建索引

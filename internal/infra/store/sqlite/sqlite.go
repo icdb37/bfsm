@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 
 	"github.com/icdb37/bfsm/internal/infra/config"
@@ -104,7 +105,14 @@ func (s *sqlite) Query(ctx context.Context, f store.Filter, v any) (err error) {
 	if f != nil {
 		UseWhere(sess, f)
 	}
-	if err = sess.Find(v); err != nil {
+	vv := reflect.ValueOf(v)
+	vv = vv.Elem()
+	if vv.Kind() == reflect.Slice {
+		if err = sess.Find(v); err != nil {
+			return err
+		}
+	}
+	if _, err = sess.Get(v); err != nil {
 		return err
 	}
 	return nil
@@ -137,6 +145,17 @@ func (s *sqlite) Upsert(ctx context.Context, f store.Filter, v any) error {
 		return err
 	}
 	return err
+}
+
+// Update 修改数据
+func (s *sqlite) Update(ctx context.Context, f store.Filter, v any) error {
+	sess := s.db.Table(s.table)
+	UseWhere(sess, f)
+	_, err := sess.Update(v)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *sqlite) NewFilter() store.Filter {

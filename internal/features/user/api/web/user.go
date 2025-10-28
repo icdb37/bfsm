@@ -3,10 +3,12 @@ package web
 import (
 	"net/http"
 
+	"github.com/icdb37/bfsm/internal/constx/featc"
 	"github.com/icdb37/bfsm/internal/features/user/model"
 	"github.com/icdb37/bfsm/internal/features/user/service"
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	coModel "github.com/icdb37/bfsm/internal/model"
+	"github.com/icdb37/bfsm/internal/wire"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,19 +16,16 @@ type userImpl struct {
 	s service.Server
 }
 
-func Init(e *echo.Echo) error {
-	svc, err := service.New()
-	if err != nil {
-		return err
-	}
+func Wire() {
+	svc := wire.ResolveName[service.Server](featc.User)
+	e := wire.Resolve[*echo.Echo]()
 	u := &userImpl{s: svc}
-	g := e.Group("/api/v1/users")
+	g := e.Group("/api/v1/user")
 	g.POST("", u.create)
 	g.POST("/search", u.search)
 	g.PUT("/:id", u.update)
 	g.DELETE("/:id", u.delete)
 	g.GET("/:id", u.get)
-	return nil
 }
 
 func (u *userImpl) create(c echo.Context) error {

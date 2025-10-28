@@ -1,2 +1,3 @@
 DATABASE_PATH: "bfsm/dbx/"
-CONFIG_CFPX_FILE: "./config-cfpx.yaml"
+INFRA_CFPX_FILE: "./config-cfpx.yaml"
+INFRA_LOGX: '{"level": "debug", "caller": true, "stacktrace": true, "stdout": true}'
