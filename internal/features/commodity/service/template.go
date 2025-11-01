@@ -18,9 +18,9 @@ type templateImpl struct {
 }
 
 // Search 商品模板列表
-func (t *templateImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryTemplate]) (resp *coModel.SearchResponse[model.TemplateCommodity], err error) {
+func (t *templateImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryTemplate]) (resp *coModel.SearchResponse[model.EntireTemplate], err error) {
 	qf := store.Unmarshal(req.Query)
-	resp = &coModel.SearchResponse[model.TemplateCommodity]{}
+	resp = &coModel.SearchResponse[model.EntireTemplate]{}
 	pf := req.GetPage()
 	if resp.Total, err = t.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
 		logx.Error("search template commodity failed", "error", err)
@@ -30,8 +30,8 @@ func (t *templateImpl) Search(ctx context.Context, req *coModel.SearchRequest[mo
 }
 
 // Get 商品模板详情
-func (t *templateImpl) Get(ctx context.Context, id string) (*model.TemplateCommodity, error) {
-	info := &model.TemplateCommodity{}
+func (t *templateImpl) Get(ctx context.Context, id string) (*model.EntireTemplate, error) {
+	info := &model.EntireTemplate{}
 	if err := t.repo.Query(ctx, store.NewFilter().Eq(field.ID, id), info); err != nil {
 		logx.Error("get template failed", "error", err)
 		return nil, err
@@ -44,7 +44,7 @@ func (t *templateImpl) Get(ctx context.Context, id string) (*model.TemplateCommo
 }
 
 // Create 商品模板创建
-func (t *templateImpl) Create(ctx context.Context, info *model.TemplateCommodity) error {
+func (t *templateImpl) Create(ctx context.Context, info *model.EntireTemplate) error {
 	logx.Info("create commodity", "info", info)
 	if err := utils.ProcessAll(ctx, info, cfpx.ProcessCreate); err != nil {
 		logx.Error("create template failed", "error", err)
@@ -58,7 +58,7 @@ func (t *templateImpl) Create(ctx context.Context, info *model.TemplateCommodity
 }
 
 // Update 商品模板更新
-func (t *templateImpl) Update(ctx context.Context, info *model.TemplateCommodity) error {
+func (t *templateImpl) Update(ctx context.Context, info *model.EntireTemplate) error {
 	if err := utils.ProcessAll(ctx, info, cfpx.ProcessUpdate); err != nil {
 		logx.Error("update template failed", "error", err)
 		return err

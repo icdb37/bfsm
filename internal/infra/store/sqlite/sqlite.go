@@ -9,11 +9,12 @@ import (
 	"reflect"
 	"strings"
 
+	_ "modernc.org/sqlite"
+	"xorm.io/xorm"
+
 	"github.com/icdb37/bfsm/internal/infra/config"
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	"github.com/icdb37/bfsm/internal/infra/store"
-	_ "modernc.org/sqlite"
-	"xorm.io/xorm"
 )
 
 var gDbe *xorm.Engine

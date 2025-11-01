@@ -66,7 +66,17 @@ func (c *commodityImpl) Update(ctx context.Context, info *model.EntireCommodity)
 		logx.Error("update commodity failed", "error", err)
 		return err
 	}
+	oldInfo := &model.EntireCommodity{}
 	where := store.NewFilter().Eq(field.ID, info.ID)
+	if err := c.repo.Query(ctx, where, oldInfo); err != nil {
+		logx.Error("update commodity failed", "error", err)
+		return err
+	}
+	if oldInfo.ID == "" {
+		logx.Error("update commodity failed", "error", "commodity not found", "id", info.ID)
+		return errx.NewNexist("商品不存在")
+	}
+	info.CompanyID, info.CreatedAt = oldInfo.CompanyID, oldInfo.CreatedAt
 	if err := c.repo.Update(ctx, where, info); err != nil {
 		logx.Error("update commodity failed", "error", err)
 		return err

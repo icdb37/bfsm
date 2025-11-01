@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/icdb37/bfsm/internal/constx/field"
-	"github.com/icdb37/bfsm/internal/features/company/model"
-	"github.com/icdb37/bfsm/internal/features/company/service"
+	"github.com/icdb37/bfsm/internal/features/commodity/model"
+	"github.com/icdb37/bfsm/internal/features/commodity/service"
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	coModel "github.com/icdb37/bfsm/internal/model"
 )
@@ -23,9 +23,6 @@ func (u *commodityHandler) search(c echo.Context) error {
 	if err := c.Bind(req); err != nil {
 		logx.Error("search commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
-	}
-	if req.Query.CompanyID == "" {
-		return c.JSON(http.StatusBadRequest, "搜索企业商品时企业标识不能为空")
 	}
 	resp, err := u.s.Search(ctx, req)
 	if err != nil {
@@ -52,9 +49,6 @@ func (u *commodityHandler) create(c echo.Context) error {
 		logx.Error("create commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	if info.CompanyID == "" {
-		return c.JSON(http.StatusBadRequest, "创建企业商品时企业标识不能为空")
-	}
 	if err := u.s.Create(ctx, info); err != nil {
 		logx.Error("create commodity failed", "error", err)
 		return c.JSON(http.StatusInternalServerError, err)
@@ -79,12 +73,12 @@ func (u *commodityHandler) update(c echo.Context) error {
 	return c.JSON(http.StatusOK, coModel.NewIDResponse(info.ID))
 }
 func (u *commodityHandler) delete(c echo.Context) error {
-	companyID, id := c.Param(field.CompanyID), c.Param(field.ID)
+	id := c.Param(field.ID)
 	ctx := c.Request().Context()
 	if err := u.s.Delete(ctx, id); err != nil {
 		logx.Error("delete commodity failed", "error", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	logx.Info("delete commodity success", field.CompanyID, companyID, field.ID, id)
+	logx.Info("delete commodity success", field.ID, id)
 	return nil
 }

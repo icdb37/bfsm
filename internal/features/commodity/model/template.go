@@ -11,8 +11,8 @@ const (
 	TableTemplate = "commodity_template"
 )
 
-// TemplateCommodity 商品
-type TemplateCommodity struct {
+// EntireTemplate 商品
+type EntireTemplate struct {
 	Xid         uint32               `json:"xid" xorm:"pk autoincr 'xid'"`
 	ID          string               `json:"id" xorm:"char(36) unique not null 'id'"`
 	Name        string               `json:"name" xorm:"varchar(100) 'name'" validate:"required" cfpx:"name"`
@@ -23,17 +23,17 @@ type TemplateCommodity struct {
 }
 
 // TableName 商品表名
-func (u *TemplateCommodity) TableName() string {
+func (u *EntireTemplate) TableName() string {
 	return TableTemplate
 }
-func (u *TemplateCommodity) GetFeature() string {
+func (u *EntireTemplate) GetFeature() string {
 	return featc.CommodityTemplate
 }
 
 // QueryCommodity 商品查询参数
 type QueryTemplate struct {
 	// TemplateID 模板ID
-	TemplateID string `json:"template_id"  where:"eq,template_id"`
+	TemplateID string `json:"template_id"  where:"eq,template_id,omitempty"`
 	// Name 姓名
 	Name string `json:"name" where:"regex,name,omitempty"`
 	// Desc 备注

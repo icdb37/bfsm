@@ -3,13 +3,14 @@ package web
 import (
 	"net/http"
 
+	"github.com/labstack/echo/v4"
+
 	"github.com/icdb37/bfsm/internal/constx/featc"
 	"github.com/icdb37/bfsm/internal/features/user/model"
 	"github.com/icdb37/bfsm/internal/features/user/service"
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	coModel "github.com/icdb37/bfsm/internal/model"
 	"github.com/icdb37/bfsm/internal/wire"
-	"github.com/labstack/echo/v4"
 )
 
 type userImpl struct {

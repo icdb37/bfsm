@@ -40,7 +40,7 @@ func (b *BankCard) Normalize() {
 type Contact struct {
 	Name  string `json:"name" xorm:"varchar(50) 'name'" validate:"required" cfpx:"name"`
 	Phone string `json:"phone" xorm:"varchar(20) 'phone'" validate:"required" cfpx:"phone"`
-	Desc  string `json:"desc" xorm:"varchar(100) 'desc'"`
+	Desc  string `json:"desc,omitempty" xorm:"varchar(100) 'desc'"`
 }
 
 func (c *Contact) Normalize() {
@@ -50,13 +50,13 @@ func (c *Contact) Normalize() {
 // Tag 标签
 type Tag struct {
 	// Category 标签类别
-	Category string `json:"category"`
+	Category string `json:"category,omitempty"`
 	// Value 标签值
-	Value string `json:"value"`
+	Value string `json:"value,omitempty"`
 	// Color 标签颜色
-	Color string `json:"color"`
+	Color string `json:"color,omitempty"`
 	// Shape 标签形状，例如：空心矩形
-	Shape string `json:"shape"`
+	Shape string `json:"shape,omitempty"`
 }
 
 func (t *Tag) Normalize() {
@@ -71,8 +71,8 @@ type CommodityAttr struct {
 
 // Commodity 商品
 type Commodity struct {
-	Xid      uint32           `json:"xid" xorm:"pk autoincr 'xid'"`
-	ID       string           `json:"id" xorm:"varchar(50) unique not null 'id'"`
+	Xid      uint32           `json:"xid,omitempty" xorm:"pk autoincr 'xid'"`
+	ID       string           `json:"id,omitempty" xorm:"varchar(50) unique not null 'id'"`
 	Name     string           `json:"name" xorm:"varchar(100) 'name'" validate:"required" cfpx:"name"`
 	Desc     string           `json:"desc" xorm:"varchar(200) 'desc'" validate:"required" cfpx:"desc"`
 	Spec     string           `json:"spec" xorm:"varchar(100) 'spec'" validate:"required" cfpx:"spec"`
@@ -92,11 +92,11 @@ func (c *Commodity) Normalize() {
 // QueryCommodity - 查询商品
 type QueryCommodity struct {
 	// Name 姓名
-	Name string `json:"name" where:"regex,name,omitempty"`
+	Name string `json:"name,omitempty" where:"regex,name,omitempty"`
 	// Desc 备注
-	Desc string `json:"desc" where:"regex,desc,omitempty"`
+	Desc string `json:"desc,omitempty" where:"regex,desc,omitempty"`
 	// Spec 规格
-	Spec string `json:"spec" where:"regex,spec,omitempty"`
+	Spec string `json:"spec,omitempty" where:"regex,spec,omitempty"`
 	// Size 尺寸
-	Size string `json:"size" where:"regex,size,omitempty"`
+	Size string `json:"size,omitempty" where:"regex,size,omitempty"`
 }

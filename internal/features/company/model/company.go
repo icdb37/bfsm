@@ -10,7 +10,7 @@ import (
 
 const (
 	// TableCompany 公司表名
-	TableCompany = "company"
+	TableCompany = "company_company"
 )
 
 // EntireCompany 完整公司信息

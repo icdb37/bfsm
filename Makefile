@@ -46,7 +46,7 @@ tidy:
 vet:
 	go vet ./...
 
-all: test
+all: tidy imports fmt test
 
 PACKAGES = $(shell go list ./... | grep -v './vendor/\|./tests\|./mock')
 BUILD_PATH = $(shell if [ "$(CI_DEST_DIR)" != "" ]; then echo "$(CI_DEST_DIR)" ; else echo "$(PWD)"; fi)

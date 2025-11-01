@@ -29,7 +29,6 @@ user:
       process:
         - kind: fmtfn
           op: "trim"
-          val: ""
         - kind: check
           op: "range"
           val: "2,20"
@@ -39,7 +38,6 @@ user:
       process:
         - kind: fmtfn
           op: "trim"
-          val: ""
         - kind: check
           op: "lt"
           val: "200"

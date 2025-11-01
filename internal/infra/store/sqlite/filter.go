@@ -1,9 +1,10 @@
 package sqlite
 
 import (
+	"xorm.io/xorm"
+
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	"github.com/icdb37/bfsm/internal/infra/store"
-	"xorm.io/xorm"
 )
 
 type fUseFilter func(w *where)

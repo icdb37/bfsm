@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
 	"github.com/icdb37/bfsm/internal/infra/config"
 	"github.com/icdb37/bfsm/internal/infra/store"
 )

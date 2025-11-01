@@ -5,8 +5,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/icdb37/bfsm/internal/infra/store"
 	"xorm.io/builder"
+
+	"github.com/icdb37/bfsm/internal/infra/store"
 )
 
 const (

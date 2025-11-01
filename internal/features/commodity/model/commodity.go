@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	TableCommodity = "commodity"
+	TableCommodity = "commodity_commodity"
 )
 
 // EntireCommodity 商品

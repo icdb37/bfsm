@@ -3,9 +3,10 @@ package echox
 import (
 	"context"
 
+	"github.com/labstack/echo/v4"
+
 	"github.com/icdb37/bfsm/internal/infra/config"
 	"github.com/icdb37/bfsm/internal/wire"
-	"github.com/labstack/echo/v4"
 )
 
 type service struct {

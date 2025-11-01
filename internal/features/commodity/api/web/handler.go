@@ -4,21 +4,21 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/icdb37/bfsm/internal/constx/featc"
-	"github.com/icdb37/bfsm/internal/features/company/service"
+	"github.com/icdb37/bfsm/internal/features/commodity/service"
 	"github.com/icdb37/bfsm/internal/wire"
 )
 
 func Wire() {
-	s1 := wire.ResolveName[service.CompanyServer](featc.CompanyCompany)
-	s2 := wire.ResolveName[service.CommodityServer](featc.CompanyCommodity)
+	s1 := wire.ResolveName[service.TemplateServer](featc.CommodityTemplate)
+	s2 := wire.ResolveName[service.CommodityServer](featc.CommodityCommodity)
 	e := wire.Resolve[*echo.Echo]()
-	registCompany(e, s1)
+	registTemplate(e, s1)
 	registCommodity(e, s2)
 }
 
-func registCompany(e *echo.Echo, s service.CompanyServer) {
-	u := &companyHandler{s: s}
-	g := e.Group("/api/v1/company/company")
+func registTemplate(e *echo.Echo, s service.TemplateServer) {
+	u := &templateHandler{s: s}
+	g := e.Group("/api/v1/commodity/template")
 	{
 		g.POST("/search", u.search)
 		g.GET("/:id", u.get)
@@ -30,7 +30,7 @@ func registCompany(e *echo.Echo, s service.CompanyServer) {
 
 func registCommodity(e *echo.Echo, s service.CommodityServer) {
 	u := &commodityHandler{s: s}
-	g := e.Group("/api/v1/company/commodity")
+	g := e.Group("/api/v1/commodity/commodity")
 	{
 		g.POST("/search", u.search)
 		g.GET("/:id", u.get)

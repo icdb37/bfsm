@@ -6,8 +6,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/icdb37/bfsm/internal/infra/logx"
 	"go.yaml.in/yaml/v3"
+
+	"github.com/icdb37/bfsm/internal/infra/logx"
 )
 
 const (
@@ -88,6 +89,9 @@ func (s *service) Process(param Featurer) error {
 	features := strings.Split(param.GetFeature(), ".")
 	pi := s.itemFeature
 	for _, f := range features {
+		if pi == nil {
+			return nil
+		}
 		if item, ok := pi.Item[f]; ok {
 			pi = item
 			continue

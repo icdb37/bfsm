@@ -3,24 +3,23 @@ package cfpx
 import (
 	"testing"
 	"time"
+
+	"github.com/icdb37/bfsm/internal/infra/config"
 )
 
 func TestUserConfig(t *testing.T) {
-	s := &service{}
-	s.load("./config.yaml")
-	if len(s.itemFeature.Item) == 0 {
-		t.Fatal("items is nil")
-	}
+	config.SetConfig(config.KeyCfpx, "./config.yaml")
+	Init()
 	info := &demoPersion{
 		Name:    " aaa \t",
 		Age:     80,
 		feature: "user",
 	}
 	nowTime := time.Now()
-	if err := s.Process(info); err != nil {
+	if err := Process(info); err != nil {
 		t.Fatal("process config more priority failed", "error", err)
 	}
-	if info.Name != " aaa" { //移除右边空白字符
+	if info.Name != "aaa" { //移除右边空白字符
 		t.Fatal("fmtfn trim failed")
 	}
 	if diff := info.CreatedAt.Sub(nowTime); diff < 0 || diff > time.Minute {
@@ -29,17 +28,15 @@ func TestUserConfig(t *testing.T) {
 }
 
 func TestDefaultConfig(t *testing.T) {
-	s := &service{}
-	s.load("./config.yaml")
-	if len(s.itemFeature.Item) == 0 {
-		t.Fatal("items is nil")
-	}
+	config.SetConfig(config.KeyCfpx, "./config.yaml")
+	Init()
 	info := &demoPersion{
-		Name: " aaa \t",
-		Age:  150,
+		Name:    " aaa \t",
+		Age:     150,
+		feature: "user",
 	}
 	nowTime := time.Now()
-	if err := s.Process(info); err != nil {
+	if err := Process(info); err != nil {
 		t.Fatal("process config more priority failed", "error", err)
 	}
 	if info.Name != "aaa" { //移除两端空白字符

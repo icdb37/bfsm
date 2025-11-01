@@ -13,11 +13,11 @@ import (
 
 // TemplateServer - 商品模板服务接口
 type TemplateServer interface {
-	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryTemplate]) (resp *coModel.SearchResponse[model.TemplateCommodity], err error)
-	Create(ctx context.Context, info *model.TemplateCommodity) error
-	Update(ctx context.Context, info *model.TemplateCommodity) error
+	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryTemplate]) (resp *coModel.SearchResponse[model.EntireTemplate], err error)
+	Create(ctx context.Context, info *model.EntireTemplate) error
+	Update(ctx context.Context, info *model.EntireTemplate) error
 	Delete(ctx context.Context, id string) error
-	Get(ctx context.Context, id string) (*model.TemplateCommodity, error)
+	Get(ctx context.Context, id string) (*model.EntireTemplate, error)
 }
 
 // CommodityServer - 商品服务接口
@@ -30,18 +30,18 @@ type CommodityServer interface {
 }
 
 func Provide() {
-	wire.ProvideName(featc.CompanyCompany, func() TemplateServer {
-		repo, err := store.NewTable(&model.TemplateCommodity{})
-		if err != nil {
-			logx.Fatal("create company repo failed", "error", err)
-		}
-		return &templateImpl{repo: repo}
-	})
-	wire.ProvideName(featc.CompanyCommodity, func() CommodityServer {
+	wire.ProvideName(featc.CommodityCommodity, func() CommodityServer {
 		repo, err := store.NewTable(&model.EntireCommodity{})
 		if err != nil {
 			logx.Fatal("create commodity repo failed", "error", err)
 		}
 		return &commodityImpl{repo: repo}
+	})
+	wire.ProvideName(featc.CommodityTemplate, func() TemplateServer {
+		repo, err := store.NewTable(&model.EntireTemplate{})
+		if err != nil {
+			logx.Fatal("create company repo failed", "error", err)
+		}
+		return &templateImpl{repo: repo}
 	})
 }
