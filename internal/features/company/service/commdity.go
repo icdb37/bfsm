@@ -5,6 +5,7 @@ import (
 
 	"github.com/icdb37/bfsm/internal/constx/field"
 	"github.com/icdb37/bfsm/internal/features/company/model"
+	"github.com/icdb37/bfsm/internal/infra/cfpx"
 	"github.com/icdb37/bfsm/internal/infra/errx"
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	"github.com/icdb37/bfsm/internal/infra/store"
@@ -24,7 +25,7 @@ func (c *commodityImpl) Search(ctx context.Context, req *coModel.SearchRequest[m
 	resp = &coModel.SearchResponse[model.EntireCommodity]{}
 	pf := req.GetPage()
 	if resp.Total, err = c.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
-		logx.Error("search companies failed", "error", err)
+		logx.Error("search commodity failed", "error", err)
 		return nil, err
 	}
 	return resp, nil
@@ -47,7 +48,7 @@ func (c *commodityImpl) Get(ctx context.Context, id string) (*model.EntireCommod
 // Create 创建商品
 func (c *commodityImpl) Create(ctx context.Context, info *model.EntireCommodity) error {
 	logx.Info("create commodity", "info", info)
-	if err := utils.ProcessAll(ctx, info, processCommodityCreate); err != nil {
+	if err := utils.ProcessAll(ctx, info, cfpx.ProcessCreate); err != nil {
 		logx.Error("create commodity failed", "error", err)
 		return err
 	}
@@ -61,7 +62,7 @@ func (c *commodityImpl) Create(ctx context.Context, info *model.EntireCommodity)
 // Update 更新商品
 func (c *commodityImpl) Update(ctx context.Context, info *model.EntireCommodity) error {
 	logx.Info("update commodity", "info", info)
-	if err := utils.ProcessAll(ctx, info, processCommodityUpdate); err != nil {
+	if err := utils.ProcessAll(ctx, info, cfpx.ProcessUpdate); err != nil {
 		logx.Error("update commodity failed", "error", err)
 		return err
 	}

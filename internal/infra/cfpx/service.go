@@ -129,6 +129,9 @@ func (s *service) process(pv *reflect.Value, parentItem *Item) error {
 			if !ok { //从默认校验匹配
 				subxItem = s.itemDefault.Item[pn.Code]
 			}
+			if subxItem == nil {
+				subxItem = pn
+			}
 			if err := s.process(&iv, subxItem); err != nil {
 				return err
 			}

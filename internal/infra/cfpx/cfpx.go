@@ -2,9 +2,11 @@
 package cfpx
 
 import (
+	"context"
 	"reflect"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/icdb37/bfsm/internal/infra/errx"
 )
 
@@ -95,11 +97,6 @@ type Param struct {
 	Val  string `json:"val" yaml:"val"`
 }
 
-// Process 数据格式化，字段校验
-func Process(param Featurer) error {
-	return pService.Process(param)
-}
-
 func processFmtfn(pv *reflect.Value, pi *Item) error {
 	if pi == nil {
 		return nil
@@ -135,6 +132,43 @@ func processCheck(pv *reflect.Value, pi *Item) error {
 				Message: err.Error(),
 			}
 		}
+	}
+	return nil
+}
+
+// Process 数据格式化，字段校验
+func Process(param Featurer) error {
+	return pService.Process(param)
+}
+
+// ProcessCreate 数据格式化，字段校验
+func ProcessCreate[T Featurer](_ context.Context, param T) error {
+	if err := Process(param); err != nil {
+		return err
+	}
+	v := reflect.ValueOf(param)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+	if !v.CanSet() {
+		return nil
+	}
+	if tv := v.FieldByName("CreatedAt"); tv.IsValid() && tv.Type() == typeTime {
+		tv.Set(reflect.ValueOf(time.Now()))
+	}
+	if tv := v.FieldByName("UpdatedAt"); tv.IsValid() && tv.Type() == typeTime {
+		tv.Set(reflect.ValueOf(time.Now()))
+	}
+	if tv := v.FieldByName("ID"); tv.IsValid() && tv.Kind() == reflect.String {
+		tv.SetString(uuid.NewString())
+	}
+	return nil
+}
+
+// ProcessUpdate 数据格式化，字段校验
+func ProcessUpdate[T Featurer](_ context.Context, param T) error {
+	if err := Process(param); err != nil {
+		return err
 	}
 	return nil
 }

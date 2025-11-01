@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/icdb37/bfsm/internal/infra/config"
 )
 
 func TestParseValue(t *testing.T) {
@@ -50,7 +52,7 @@ func TestCheckLt(t *testing.T) {
 
 type demoPersion struct {
 	Name      string    `cfpx:"field=code:name|desc:名称,fmtfn=trim"`
-	Age       int       `cfpx:"field=code:age|desc:年龄,check=lt:200"`
+	Age       int       `cfpx:"field=code:age|desc:年龄,check=lt:100"`
 	CreatedAt time.Time `cfpx:"field=code:created_at|desc:创建,fmtfn=nowdt"`
 	feature   string
 }
@@ -60,11 +62,13 @@ func (d *demoPersion) GetFeature() string {
 }
 
 func TestFmtfnOps(t *testing.T) {
-	pService = &service{}
+	config.SetConfig(config.KeyCfpx, "./config.yaml")
+	Init()
 	pService.load("./config.yaml")
 	info := &demoPersion{
-		Name: " aaa \t",
-		Age:  100,
+		Name:    " aaa \t",
+		Age:     120,
+		feature: "user",
 	}
 	nowTime := time.Now()
 	if err := Process(info); err != nil {
