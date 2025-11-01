@@ -7,24 +7,20 @@ import (
 	coModel "github.com/icdb37/bfsm/internal/model"
 )
 
-const (
-	TableTemplate = "commodity_template"
-)
-
 // EntireTemplate 商品
 type EntireTemplate struct {
 	Xid         uint32               `json:"xid" xorm:"pk autoincr 'xid'"`
+	CreatedAt   time.Time            `json:"created_at" xorm:"created 'created_at'"`
+	UpdatedAt   time.Time            `json:"updated_at" xorm:"updated 'updated_at'"`
 	ID          string               `json:"id" xorm:"char(36) unique not null 'id'"`
 	Name        string               `json:"name" xorm:"varchar(100) 'name'" validate:"required" cfpx:"name"`
 	Desc        string               `json:"desc" xorm:"varchar(200) 'desc'" validate:"required" cfpx:"desc"`
-	CreatedAt   time.Time            `json:"created_at" xorm:"created 'created_at'"`
-	UpdatedAt   time.Time            `json:"updated_at" xorm:"updated 'updated_at'"`
 	Commodities []*coModel.Commodity `json:"commodities" xorm:"json 'commodities'"`
 }
 
 // TableName 商品表名
 func (u *EntireTemplate) TableName() string {
-	return TableTemplate
+	return featc.GetTableName(featc.CommodityTemplate)
 }
 func (u *EntireTemplate) GetFeature() string {
 	return featc.CommodityTemplate

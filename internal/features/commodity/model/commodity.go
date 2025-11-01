@@ -7,10 +7,6 @@ import (
 	coModel "github.com/icdb37/bfsm/internal/model"
 )
 
-const (
-	TableCommodity = "commodity_commodity"
-)
-
 // EntireCommodity 商品
 type EntireCommodity struct {
 	coModel.Commodity `json:",inline" xorm:"extends"`
@@ -20,7 +16,7 @@ type EntireCommodity struct {
 
 // TableName 商品表名
 func (u *EntireCommodity) TableName() string {
-	return TableCommodity
+	return featc.GetTableName(featc.CommodityCommodity)
 }
 func (u *EntireCommodity) GetFeature() string {
 	return featc.CommodityCommodity

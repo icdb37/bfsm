@@ -90,3 +90,8 @@ func (q *PageFilter) GetSorts() []string {
 func NewPageFilter() *PageFilter {
 	return &PageFilter{}
 }
+
+// Wgetter 过滤条件获取器
+type Wgetter interface {
+	GetxWhere() (any, []any)
+}

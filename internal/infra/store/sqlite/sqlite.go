@@ -103,7 +103,9 @@ func (s *sqlite) Search(ctx context.Context, f store.Filter, p store.Pager, v an
 // Query 查询数据
 func (s *sqlite) Query(ctx context.Context, f store.Filter, v any) (err error) {
 	sess := s.db.Table(s.table)
-	if f != nil {
+	if wg, ok := f.(store.Wgetter); ok {
+		sess.Where(wg.GetxWhere())
+	} else if f != nil {
 		UseWhere(sess, f)
 	}
 	vv := reflect.ValueOf(v)

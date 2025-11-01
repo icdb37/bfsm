@@ -41,13 +41,6 @@ func (e *ErrCfpx) Error() string {
 	return e.Message
 }
 
-// NewNexist 创建资源不存在异常
-func NewNexist(format string, args ...any) *ErrNexist {
-	return &ErrNexist{
-		Message: fmt.Sprintf(format, args...),
-	}
-}
-
 // ErrNexist 资源不存在异常
 type ErrNexist struct {
 	Message string `json:"message"`
@@ -56,4 +49,28 @@ type ErrNexist struct {
 // Error 实现 error 接口
 func (e *ErrNexist) Error() string {
 	return e.Message
+}
+
+// NewNexist 创建资源不存在异常
+func NewNexist(format string, args ...any) *ErrNexist {
+	return &ErrNexist{
+		Message: fmt.Sprintf(format, args...),
+	}
+}
+
+// ErrStatus 状态异常
+type ErrStatus struct {
+	Message string `json:"message"`
+}
+
+// Error 实现 error 接口
+func (e *ErrStatus) Error() string {
+	return e.Message
+}
+
+// NewErrStatus 创建状态异常
+func NewErrStatus(format string, args ...any) *ErrStatus {
+	return &ErrStatus{
+		Message: fmt.Sprintf(format, args...),
+	}
 }

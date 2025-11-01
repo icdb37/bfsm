@@ -8,11 +8,6 @@ import (
 	"github.com/icdb37/bfsm/internal/utils"
 )
 
-const (
-	// TableCompany 公司表名
-	TableCompany = "company_company"
-)
-
 // EntireCompany 完整公司信息
 type EntireCompany struct {
 	Xid       uint32             `json:"xid" xorm:"pk autoincr 'xid'"`
@@ -27,7 +22,7 @@ type EntireCompany struct {
 
 // TableName 表名
 func (c *EntireCompany) TableName() string {
-	return TableCompany
+	return featc.GetTableName(featc.CompanyCompany)
 }
 
 // GetFeature 特征
@@ -51,7 +46,7 @@ type SimpleCompany struct {
 
 // TableName 表名
 func (c *SimpleCompany) TableName() string {
-	return TableCompany
+	return featc.GetTableName(featc.CompanyCommodity)
 }
 
 type QueryCompany struct {

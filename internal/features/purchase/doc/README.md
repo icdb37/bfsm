@@ -11,7 +11,8 @@
   "desc": "采购描述",
   "created_at": "2025-10-28T00:00:00Z",
   "status": "PENDING", //状态：PENDING, CONFIRMED, COMPLETED, CANCELLED
-  "cost": 123400, //总共费用，分
+  "total_amount": 123400, //总共费用，分
+  "clear_amount": 123400, //已结算费用，分
   "companies": [
     {
       "company": {
@@ -20,7 +21,7 @@
       },
       "status": "PENDING", //状态：PENDING, CONFIRMED, COMPLETED, CANCELLED
       "cost": 123400, //总共费用，分
-      "extra_costs": [
+      "extras": [
         {
             "name": "额外费用名称",
             "desc": "额外费用描述",
@@ -53,3 +54,20 @@
   ]
 }
 ```
+
+## 功能列表
+
+### 基本功能
+
+- 创建采购订单
+- 查询采购订单
+- 更新采购订单状态
+- 删除采购订单
+- 采购订单状态流转
+- 采购商品入库
+
+### 高级功能
+
+- 采购订单商品导出（word模板化）
+  - A4纸张
+  - 三联清单

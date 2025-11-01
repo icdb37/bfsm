@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/icdb37/bfsm/internal/constx/featc"
 	"github.com/icdb37/bfsm/internal/utils"
 )
 
@@ -77,8 +78,9 @@ type Commodity struct {
 	Desc     string           `json:"desc" xorm:"varchar(200) 'desc'" validate:"required" cfpx:"desc"`
 	Spec     string           `json:"spec" xorm:"varchar(100) 'spec'" validate:"required" cfpx:"spec"`
 	Size     string           `json:"size" xorm:"varchar(100) 'size'" validate:"required" cfpx:"size"`
-	Validity uint16           `json:"validity" xorm:"tinyint 'validity'" validate:"required"`
+	Validity int32            `json:"validity" xorm:"tinyint 'validity'" validate:"required" cfpx:"validity"`
 	Price    uint32           `json:"price" xorm:"int 'price'" validate:"required"`
+	Count    uint32           `json:"count" xorm:"count 'count'"`
 	Attrs    []*CommodityAttr `json:"attrs" xorm:"json 'attrs'"`
 }
 
@@ -99,4 +101,47 @@ type QueryCommodity struct {
 	Spec string `json:"spec,omitempty" where:"regex,spec,omitempty"`
 	// Size 尺寸
 	Size string `json:"size,omitempty" where:"regex,size,omitempty"`
+	// Count 数量
+	Count RangeX[uint32] `json:"count,omitempty" where:"range,count,omitempty"`
+}
+
+// SimpleCompany 简单公司信息
+type SimpleCompany struct {
+	Xid  uint32 `json:"xid" xorm:"pk autoincr 'xid'"`
+	ID   string `json:"id" xorm:"char(36) unique not null 'id'"`
+	Name string `json:"name" xorm:"varchar(100) 'name'" validate:"required"`
+}
+
+// TableName 表名
+func (c *SimpleCompany) TableName() string {
+	return featc.GetTableName(featc.CompanyCompany)
+}
+
+// EntireBatch 批次信息
+type EntireBatch struct {
+	ID        string         `json:"id" xorm:"varchar(50) 'id'"`
+	Desc      string         `json:"desc" xorm:"varchar(200) 'desc'" validate:"required"`
+	Storage   string         `json:"storage" xorm:"varchar(100) 'storage'" cfpx:"storage"` // 存储位置
+	Commodity []*Commodity   `json:"commodity" xorm:"json 'commodity'" cfpx:"commodity"`   //商品费用
+	Company   *SimpleCompany `json:"company" xorm:"json 'company'" cfpx:"company"`
+	CreatedAt time.Time      `json:"createdAt" xorm:"created 'created_at'"`
+	UpdatedAt time.Time      `json:"updatedAt" xorm:"updated 'updated_at'"`
+}
+
+// QueryBatch - 查询批次
+type QueryBatch struct {
+	// ID 批次ID
+	ID string `json:"id,omitempty" where:"regex,id,omitempty"`
+	// Desc 备注
+	Desc string `json:"desc,omitempty" where:"regex,desc,omitempty"`
+	// Storage 存储位置
+	Storage string `json:"storage,omitempty" where:"regex,storage,omitempty"`
+	// CompanyName 公司名称
+	CompanyName string `json:"company_name,omitempty" where:"regex,company_name,omitempty"`
+	// CommodityName 商品名称
+	CommodityName string `json:"commodity_name,omitempty" where:"regex,commodity,omitempty"`
+	// CreatedAt 范围搜索
+	CreatedAt RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
+	// UpdatedAt 范围搜索
+	UpdatedAt RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
 }
