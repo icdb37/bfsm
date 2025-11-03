@@ -11,18 +11,36 @@ import (
 )
 
 type inventoryImpl struct {
-	repo store.Tabler
+	repoLast store.Tabler
+	repoFull store.Tabler
 }
 
-func (i *inventoryImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCommodity]) (resp *coModel.SearchResponse[model.EntireCommodity], err error) {
-	return nil, nil
-}
-
-func (i *inventoryImpl) Get(ctx context.Context, id string) (resp []*model.EntireCommodity, err error) {
-	resp = []*model.EntireCommodity{}
-	if err := i.repo.Query(ctx, store.NewFilter().Eq(field.ID, id), &resp); err != nil {
-		logx.Error("get commodity failed", "id", id, "error", err)
+func (i *inventoryImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCommodity]) (resp *coModel.SearchResponse[model.LastCommodity], err error) {
+	qf := store.Unmarshal(req.Query)
+	resp = &coModel.SearchResponse[model.LastCommodity]{}
+	pf := req.GetPage()
+	if resp.Total, err = i.repoLast.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+		logx.Error("search last commodity failed", "error", err)
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (i *inventoryImpl) Get(ctx context.Context, id string) (resp []*model.FullCommodity, err error) {
+	resp = []*model.FullCommodity{}
+	if err := i.repoFull.Query(ctx, store.NewFilter().Eq(field.ID, id), &resp); err != nil {
+		logx.Error("get full commodity failed", "id", id, "error", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+// Produce 增加库存
+func (i *inventoryImpl) Produce(ctx context.Context, info *coModel.EntireBatch) error {
+	return i.save(ctx, info)
+}
+
+// Consume 减少库存
+func (i *inventoryImpl) Consume(ctx context.Context, info *coModel.EntireBatch) error {
+	return i.save(ctx, info)
 }

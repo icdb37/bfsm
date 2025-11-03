@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/icdb37/bfsm/internal/constx/enum"
 	"github.com/icdb37/bfsm/internal/constx/featc"
 	"github.com/icdb37/bfsm/internal/utils"
 )
@@ -72,16 +73,19 @@ type CommodityAttr struct {
 
 // Commodity 商品
 type Commodity struct {
-	Xid      uint32           `json:"xid,omitempty" xorm:"pk autoincr 'xid'"`
-	ID       string           `json:"id,omitempty" xorm:"varchar(50) unique not null 'id'"`
-	Name     string           `json:"name" xorm:"varchar(100) 'name'" validate:"required" cfpx:"name"`
-	Desc     string           `json:"desc" xorm:"varchar(200) 'desc'" validate:"required" cfpx:"desc"`
-	Spec     string           `json:"spec" xorm:"varchar(100) 'spec'" validate:"required" cfpx:"spec"`
-	Size     string           `json:"size" xorm:"varchar(100) 'size'" validate:"required" cfpx:"size"`
-	Validity int32            `json:"validity" xorm:"tinyint 'validity'" validate:"required" cfpx:"validity"`
-	Price    uint32           `json:"price" xorm:"int 'price'" validate:"required"`
-	Count    uint32           `json:"count" xorm:"count 'count'"`
+	Hash     string           `json:"hash" xorm:"char(32) 'hash'"`
+	Name     string           `json:"name" xorm:"varchar(100) 'name'" cfpx:"name"`
+	Desc     string           `json:"desc" xorm:"varchar(200) 'desc'" cfpx:"desc"`
+	Spec     string           `json:"spec" xorm:"varchar(100) 'spec'" cfpx:"spec"`
+	Size     string           `json:"size" xorm:"varchar(100) 'size'" cfpx:"size"`
+	Validity int32            `json:"validity" xorm:"tinyint 'validity'" cfpx:"validity"`
+	Price    int32            `json:"price" xorm:"int 'price'" cfpx:"price"`
+	Count    int32            `json:"count" xorm:"count 'count'" cfpx:"count"`
 	Attrs    []*CommodityAttr `json:"attrs" xorm:"json 'attrs'"`
+}
+
+func (c *Commodity) GetHash() string {
+	return utils.Hash(c.Name, c.Spec, c.Size)
 }
 
 func (c *Commodity) Normalize() {
@@ -107,9 +111,8 @@ type QueryCommodity struct {
 
 // SimpleCompany 简单公司信息
 type SimpleCompany struct {
-	Xid  uint32 `json:"xid" xorm:"pk autoincr 'xid'"`
 	ID   string `json:"id" xorm:"char(36) unique not null 'id'"`
-	Name string `json:"name" xorm:"varchar(100) 'name'" validate:"required"`
+	Name string `json:"name" xorm:"varchar(100) 'name'"`
 }
 
 // TableName 表名
@@ -117,15 +120,22 @@ func (c *SimpleCompany) TableName() string {
 	return featc.GetTableName(featc.CompanyCompany)
 }
 
+// RefCompany RefCompany
+type RefCompany struct {
+	CompanyID   string `json:"company_id" xorm:"char(36) 'company_id'"`
+	CompanyName string `json:"company_name" xorm:"varchar(100) 'company_name'"`
+}
+
 // EntireBatch 批次信息
 type EntireBatch struct {
-	ID        string         `json:"id" xorm:"varchar(50) 'id'"`
-	Desc      string         `json:"desc" xorm:"varchar(200) 'desc'" validate:"required"`
-	Storage   string         `json:"storage" xorm:"varchar(100) 'storage'" cfpx:"storage"` // 存储位置
-	Commodity []*Commodity   `json:"commodity" xorm:"json 'commodity'" cfpx:"commodity"`   //商品费用
-	Company   *SimpleCompany `json:"company" xorm:"json 'company'" cfpx:"company"`
-	CreatedAt time.Time      `json:"createdAt" xorm:"created 'created_at'"`
-	UpdatedAt time.Time      `json:"updatedAt" xorm:"updated 'updated_at'"`
+	ID         string          `json:"id" xorm:"varchar(50) 'id'"`
+	Desc       string          `json:"desc" xorm:"varchar(200) 'desc'" validate:"required"`
+	Storage    string          `json:"storage" xorm:"varchar(100) 'storage'" cfpx:"storage"` // 存储位置
+	Commodity  []*Commodity    `json:"commodity" xorm:"json 'commodity'" cfpx:"commodity"`   //商品费用
+	Company    *SimpleCompany  `json:"company" xorm:"json 'company'" cfpx:"company"`
+	CreatedAt  time.Time       `json:"createdAt" xorm:"created 'created_at'"`
+	UpdatedAt  time.Time       `json:"updatedAt" xorm:"updated 'updated_at'"`
+	SourceCode enum.SourceCode `json:"source_code" xorm:"tinyint 'source_code'"`
 }
 
 // QueryBatch - 查询批次

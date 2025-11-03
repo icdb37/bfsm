@@ -8,6 +8,7 @@ import (
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	"github.com/icdb37/bfsm/internal/infra/store"
 	coModel "github.com/icdb37/bfsm/internal/model"
+	coService "github.com/icdb37/bfsm/internal/service"
 	"github.com/icdb37/bfsm/internal/wire"
 )
 
@@ -29,30 +30,42 @@ type InventoryConsumer interface {
 
 // InventoryInventory 库存管理
 type InventoryInventory interface {
-	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCommodity]) (resp *coModel.SearchResponse[model.EntireCommodity], err error)
-	Get(ctx context.Context, id string) (resp []*model.EntireCommodity, err error)
+	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCommodity]) (resp *coModel.SearchResponse[model.LastCommodity], err error)
+	Get(ctx context.Context, id string) (resp []*model.FullCommodity, err error)
 }
 
+// wire.ProvideName(featc.InventoryConsume, func() InventoryConsumer {
+// 	repo, err := store.NewTable(&model.ConsumeBatch{})
+// 	if err != nil {
+// 		logx.Fatal("create repo failed", "feature", featc.InventoryConsume, "error", err)
+// 	}
+// 	return &consumeImpl{repo: repo}
+// })
+// wire.ProvideName(featc.InventoryProduce, func() InventoryProducer {
+// 	repo, err := store.NewTable(&model.ProduceBatch{})
+// 	if err != nil {
+// 		logx.Fatal("create repo failed", "feature", featc.InventoryProduce, "error", err)
+// 	}
+// 	return &produceImpl{repo: repo}
+// })
+
 func Provide() {
-	wire.ProvideName(featc.InventoryConsume, func() InventoryConsumer {
-		repo, err := store.NewTable(&model.ConsumeBatch{})
-		if err != nil {
-			logx.Fatal("create repo failed", "feature", featc.InventoryConsume, "error", err)
-		}
-		return &consumeImpl{repo: repo}
-	})
-	wire.ProvideName(featc.InventoryProduce, func() InventoryProducer {
-		repo, err := store.NewTable(&model.ProduceBatch{})
-		if err != nil {
-			logx.Fatal("create repo failed", "feature", featc.InventoryProduce, "error", err)
-		}
-		return &produceImpl{repo: repo}
-	})
+	repoFull, err := store.NewTable(&model.FullCommodity{})
+	if err != nil {
+		logx.Fatal("create repo failed", "feature", featc.InventoryInventory, "error", err)
+	}
+	repoLast, err := store.NewTable(&model.LastCommodity{})
+	if err != nil {
+		logx.Fatal("create repo failed", "feature", featc.InventoryInventory, "error", err)
+	}
+	i := &inventoryImpl{repoFull: repoFull, repoLast: repoLast}
 	wire.ProvideName(featc.InventoryInventory, func() InventoryInventory {
-		repo, err := store.NewTable(&model.EntireCommodity{})
-		if err != nil {
-			logx.Fatal("create repo failed", "feature", featc.InventoryInventory, "error", err)
-		}
-		return &inventoryImpl{repo: repo}
+		return i
+	})
+	wire.ProvideName(featc.InventoryConsume, func() coService.InventoryConsumer {
+		return i
+	})
+	wire.ProvideName(featc.InventoryProduce, func() coService.InventoryProducer {
+		return i
 	})
 }

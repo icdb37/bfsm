@@ -10,7 +10,7 @@ type ProduceBatch coModel.EntireBatch
 
 // TableName 数据库表名
 func (e *ProduceBatch) TableName() string {
-	return featc.InventoryProduce
+	return featc.GetTableName(featc.InventoryProduce)
 }
 
 // GetFeature 特征
@@ -23,7 +23,7 @@ type ConsumeBatch coModel.EntireBatch
 
 // TableName 数据库表名
 func (e *ConsumeBatch) TableName() string {
-	return featc.InventoryProduce
+	return featc.GetTableName(featc.InventoryConsume)
 }
 
 // GetFeature 特征

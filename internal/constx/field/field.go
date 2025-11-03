@@ -9,4 +9,6 @@ const (
 	Name = "name"
 	// CompanyID 公司ID
 	CompanyID = "company_id"
+	// Hash 哈希
+	Hash = "hash"
 )

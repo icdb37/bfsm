@@ -28,3 +28,15 @@ func PmakeX[T any](size int) []*T {
 	}
 	return rets
 }
+
+// Convert 转换
+type Convert[T any, U any] = func(v T) U
+
+// Converts 转化列表
+func Converts[T any, U any](vs []T, f Convert[T, U]) []U {
+	rets := make([]U, len(vs))
+	for i, v := range vs {
+		rets[i] = f(v)
+	}
+	return rets
+}

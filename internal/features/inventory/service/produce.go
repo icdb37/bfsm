@@ -11,20 +11,20 @@ type produceImpl struct {
 	repo store.Tabler
 }
 
-func (c *produceImpl) Search(ctx context.Context, req *coModel.SearchRequest[coModel.QueryBatch]) (resp *coModel.SearchResponse[coModel.EntireBatch], err error) {
+func (p *produceImpl) Search(ctx context.Context, req *coModel.SearchRequest[coModel.QueryBatch]) (resp *coModel.SearchResponse[coModel.EntireBatch], err error) {
 	return nil, nil
 }
 
-func (c *produceImpl) Get(ctx context.Context, id string) (resp []*coModel.EntireBatch, err error) {
+func (p *produceImpl) Get(ctx context.Context, id string) (resp []*coModel.EntireBatch, err error) {
 	return nil, nil
 }
-func (c *produceImpl) Create(ctx context.Context, info *coModel.EntireBatch) error {
+func (p *produceImpl) Create(ctx context.Context, info *coModel.EntireBatch) error {
 	return nil
 }
-func (c *produceImpl) Update(ctx context.Context, info *coModel.EntireBatch) error {
+func (p *produceImpl) Update(ctx context.Context, info *coModel.EntireBatch) error {
 	return nil
 }
 
-func (c *produceImpl) Delete(ctx context.Context, id string) error {
+func (p *produceImpl) Delete(ctx context.Context, id string) error {
 	return nil
 }

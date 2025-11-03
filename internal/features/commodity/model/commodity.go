@@ -9,6 +9,8 @@ import (
 
 // EntireCommodity 商品
 type EntireCommodity struct {
+	Xid               uint32 `json:"xid" xorm:"pk autoincr 'xid'"`
+	ID                string `json:"id" xorm:"char(36) unique not null 'id'"`
 	coModel.Commodity `json:",inline" xorm:"extends"`
 	CreatedAt         time.Time `json:"created_at" xorm:"created 'created_at'"`
 	UpdatedAt         time.Time `json:"updated_at" xorm:"updated 'updated_at'"`

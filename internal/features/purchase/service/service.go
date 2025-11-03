@@ -8,6 +8,7 @@ import (
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	"github.com/icdb37/bfsm/internal/infra/store"
 	coModel "github.com/icdb37/bfsm/internal/model"
+	coService "github.com/icdb37/bfsm/internal/service"
 	"github.com/icdb37/bfsm/internal/wire"
 )
 
@@ -20,18 +21,13 @@ type PurchaseServer interface {
 	Get(ctx context.Context, id string) (*model.EntirePurchase, error)
 }
 
-// InventoryProducer - 仓库生产服务接口
-type InventoryProducer interface {
-	Produce(ctx context.Context, infos []*coModel.EntireBatch) error
-}
-
 func Provide() {
 	wire.ProvideName(featc.CommodityCommodity, func() PurchaseServer {
 		repo, err := store.NewTable(&model.EntirePurchase{})
 		if err != nil {
 			logx.Fatal("create purchase repo failed", "error", err)
 		}
-		inventory := wire.ResolveName[InventoryProducer](featc.InventoryProduce)
+		inventory := wire.ResolveName[coService.InventoryProducer](featc.InventoryProduce)
 		return &purchaseImpl{repo: repo, inventory: inventory}
 	})
 }

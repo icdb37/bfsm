@@ -84,7 +84,7 @@ func (s *sqlite) Total(ctx context.Context, f store.Filter) (int64, error) {
 	return total, nil
 }
 
-// Query 查询数据
+// Search 查询数据
 func (s *sqlite) Search(ctx context.Context, f store.Filter, p store.Pager, v any) (int64, error) {
 	sess := s.db.Table(s.table)
 	if f != nil {
@@ -114,6 +114,7 @@ func (s *sqlite) Query(ctx context.Context, f store.Filter, v any) (err error) {
 		if err = sess.Find(v); err != nil {
 			return err
 		}
+		return nil
 	}
 	if _, err = sess.Get(v); err != nil {
 		return err

@@ -11,12 +11,13 @@ import (
 	"github.com/icdb37/bfsm/internal/infra/logx"
 	"github.com/icdb37/bfsm/internal/infra/store"
 	coModel "github.com/icdb37/bfsm/internal/model"
+	coService "github.com/icdb37/bfsm/internal/service"
 	"github.com/icdb37/bfsm/internal/utils"
 )
 
 type purchaseImpl struct {
 	repo      store.Tabler
-	inventory InventoryProducer
+	inventory coService.InventoryProducer
 }
 
 func (p *purchaseImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchase]) (resp *coModel.SearchResponse[model.EntirePurchase], err error) {

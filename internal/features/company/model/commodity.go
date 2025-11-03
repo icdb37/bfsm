@@ -13,6 +13,8 @@ const (
 
 // EntireCommodity 商品
 type EntireCommodity struct {
+	Xid               uint32 `json:"xid" xorm:"pk autoincr 'xid'"`
+	ID                string `json:"id" xorm:"char(36) unique not null 'id'"`
 	coModel.Commodity `json:",inline" xorm:"extends"`
 	// CompanyID 公司ID
 	CompanyID string    `json:"company_id" xorm:"varchar(36) not null 'company_id'"`

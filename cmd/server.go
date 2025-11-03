@@ -5,6 +5,7 @@ import (
 
 	webCommodity "github.com/icdb37/bfsm/internal/features/commodity/api/web"
 	webCompany "github.com/icdb37/bfsm/internal/features/company/api/web"
+	webInventory "github.com/icdb37/bfsm/internal/features/inventory/api/web"
 	webUser "github.com/icdb37/bfsm/internal/features/user/api/web"
 	"github.com/icdb37/bfsm/internal/wire/echox"
 
@@ -12,6 +13,7 @@ import (
 
 	svcCommodity "github.com/icdb37/bfsm/internal/features/commodity/service"
 	svcCompany "github.com/icdb37/bfsm/internal/features/company/service"
+	svcInventory "github.com/icdb37/bfsm/internal/features/inventory/service"
 	svcUser "github.com/icdb37/bfsm/internal/features/user/service"
 	"github.com/icdb37/bfsm/internal/infra/cfpx"
 	"github.com/icdb37/bfsm/internal/infra/config"
@@ -48,11 +50,13 @@ func initInfra() {
 }
 func provideService() {
 	echox.Provide()
+	svcInventory.Provide()
 	svcCompany.Provide()
 	svcUser.Provide()
 	svcCommodity.Provide()
 }
 func wireWeb() {
+	webInventory.Wire()
 	webCompany.Wire()
 	webUser.Wire()
 	webCommodity.Wire()
