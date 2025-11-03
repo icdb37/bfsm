@@ -12,3 +12,8 @@ const (
 	// Hash 哈希
 	Hash = "hash"
 )
+
+const (
+	// CommodityHash 商品哈希
+	CommodityHash = "commodity_hash"
+)

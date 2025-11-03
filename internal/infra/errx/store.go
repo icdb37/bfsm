@@ -5,9 +5,9 @@ import "fmt"
 
 // ErrStore 业务异常存储
 type ErrStore struct {
-	Table   string `json:"table"`
-	Query   string `json:"where"`
-	Message string `json:"message"`
+	Table   string `json:"table,omitempty"`
+	Query   string `json:"where,omitempty"`
+	Message string `json:"message,omitempty"`
 }
 
 // Error 实现 error 接口
@@ -24,8 +24,8 @@ func Store(format string, args ...any) *ErrStore {
 
 // ErrCfpx cfpx校验异常
 type ErrCfpx struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
+	Field   string `json:"field,omitempty"`
+	Message string `json:"message,omitempty"`
 }
 
 // NewCfpx 创建cfpx校验异常
@@ -43,7 +43,7 @@ func (e *ErrCfpx) Error() string {
 
 // ErrNexist 资源不存在异常
 type ErrNexist struct {
-	Message string `json:"message"`
+	Message string `json:"message,omitempty"`
 }
 
 // Error 实现 error 接口
@@ -60,7 +60,7 @@ func NewNexist(format string, args ...any) *ErrNexist {
 
 // ErrStatus 状态异常
 type ErrStatus struct {
-	Message string `json:"message"`
+	Message string `json:"message,omitempty"`
 }
 
 // Error 实现 error 接口
@@ -71,6 +71,23 @@ func (e *ErrStatus) Error() string {
 // NewErrStatus 创建状态异常
 func NewErrStatus(format string, args ...any) *ErrStatus {
 	return &ErrStatus{
+		Message: fmt.Sprintf(format, args...),
+	}
+}
+
+type ErrParam struct {
+	Field   string `json:"field,omitempty"`
+	Message string `json:"message,omitempty"`
+}
+
+// Error 实现 error 接口
+func (e *ErrParam) Error() string {
+	return e.Message
+}
+
+func NewErrParam(field string, format string, args ...any) *ErrParam {
+	return &ErrParam{
+		Field:   field,
 		Message: fmt.Sprintf(format, args...),
 	}
 }

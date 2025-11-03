@@ -15,10 +15,12 @@ func Wire() {
 	c := wire.ResolveName[coService.InventoryConsumer](featc.InventoryConsume)
 	e := wire.Resolve[*echo.Echo]()
 	u := &inventoryHandler{s: s, p: p, c: c}
-	g := e.Group("/api/v1/inventory/inventory")
+	g := e.Group("/api/v1/inventory")
 	{
-		g.POST("/search", u.search)
-		g.GET("/:id", u.get)
+		g.POST("/last/search", u.searchLast)
+		g.POST("/full/search", u.searchFull)
+		g.PUT("/last/:id", u.updateLast)
+		g.PUT("/full/:id", u.updateFull)
 	}
 	e.POST("/api/v1/inventory/produce", u.produce)
 	e.POST("/api/v1/inventory/consume", u.consume)

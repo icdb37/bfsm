@@ -15,10 +15,18 @@ const (
 type SourceCode int8
 
 const (
+	// SourceCodeInventoryUpdateConsume 编辑出库
+	SourceCodeInventoryUpdateConsume SourceCode = -3
+	// SourceCodeInventoryCreateConsume  手动出库
+	SourceCodeInventoryCreateConsume SourceCode = -2
 	// SourceCodeConsume 销售
 	SourceCodeConsume SourceCode = -1
 	// SourceCodeUndefined 未定义
 	SourceCodeUndefined SourceCode = 0
-	// SourceCodeProduce 采购
-	SourceCodeProduce SourceCode = 1
+	// SourceCodePurchaseProduce 采购入库
+	SourceCodePurchaseProduce SourceCode = 1
+	// SourceCodeInventoryCreateProduce 手动入库
+	SourceCodeInventoryCreateProduce SourceCode = 2
+	// SourceCodeInventoryUpdateProduce 编辑入库
+	SourceCodeInventoryUpdateProduce SourceCode = 3
 )

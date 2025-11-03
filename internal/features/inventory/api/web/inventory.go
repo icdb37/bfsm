@@ -20,24 +20,28 @@ type inventoryHandler struct {
 	c coService.InventoryConsumer
 }
 
-func (u *inventoryHandler) search(c echo.Context) error {
-	req := &coModel.SearchRequest[model.QueryCommodity]{}
+func (u *inventoryHandler) searchLast(c echo.Context) error {
+	req := &coModel.SearchRequest[model.QueryLastCommodity]{}
 	ctx := c.Request().Context()
 	if err := c.Bind(req); err != nil {
 		logx.Error("search commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	resp, err := u.s.Search(ctx, req)
+	resp, err := u.s.SearchLast(ctx, req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, resp)
 }
 
-func (u *inventoryHandler) get(c echo.Context) error {
-	id := c.Param(field.ID)
+func (u *inventoryHandler) searchFull(c echo.Context) error {
 	ctx := c.Request().Context()
-	info, err := u.s.Get(ctx, id)
+	req := &coModel.SearchRequest[model.QueryFullCommodity]{}
+	if err := c.Bind(req); err != nil {
+		logx.Error("search commodity bind failed", "error", err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	info, err := u.s.SearchFull(ctx, req)
 	if err != nil {
 		logx.Error("get commodity failed", "error", err)
 		return c.JSON(http.StatusInternalServerError, err)
@@ -74,4 +78,33 @@ func (u *inventoryHandler) consume(c echo.Context) error {
 	}
 	logx.Info("consume commodity success", field.ID, info.ID)
 	return c.JSON(http.StatusOK, coModel.NewIDResponse(info.ID))
+}
+func (u *inventoryHandler) updateLast(c echo.Context) error {
+	ctx := c.Request().Context()
+	req := &model.LastCommodity{}
+	if err := c.Bind(req); err != nil {
+		logx.Error("update full commodity bind failed", "error", err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	if err := u.s.UpdateLast(ctx, req); err != nil {
+		logx.Error("update last commodity failed", "error", err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	logx.Info("update last commodity success", field.ID, req.ID)
+	return c.JSON(http.StatusOK, coModel.NewIDResponse(req.ID))
+}
+
+func (u *inventoryHandler) updateFull(c echo.Context) error {
+	ctx := c.Request().Context()
+	req := &model.FullCommodity{}
+	if err := c.Bind(req); err != nil {
+		logx.Error("update full commodity bind failed", "error", err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	if err := u.s.UpdateFull(ctx, req); err != nil {
+		logx.Error("update full commodity failed", "error", err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	logx.Info("update full commodity success", field.ID, req.ID)
+	return c.JSON(http.StatusOK, coModel.NewIDResponse(req.ID))
 }

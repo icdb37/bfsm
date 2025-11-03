@@ -23,8 +23,8 @@ func (i *inventoryImpl) saveFull(ctx context.Context, info *coModel.EntireBatch)
 			UpdatedAt:  nowTime,
 			BatchID:    info.ID,
 			Storage:    info.Storage,
-			Company:    &coModel.RefCompany{CompanyID: info.Company.ID, CompanyName: info.Company.Name},
-			Commodity:  c,
+			Company:    coModel.RefCompany{CompanyID: info.Company.ID, CompanyName: info.Company.Name},
+			Commodity:  c.CloneRef(),
 			SourceCode: info.SourceCode,
 		})
 	}
@@ -42,8 +42,8 @@ func (i *inventoryImpl) saveLast(ctx context.Context, info *coModel.EntireBatch)
 		hashs = append(hashs, c.Hash)
 	}
 	lasts := []*model.LastCommodity{}
-	if err := i.repoLast.Query(ctx, store.NewFilter().In(field.Hash, hashs), &lasts); err != nil {
-		logx.Error("get last commodity failed", "ids", hashs, "error", err)
+	if err := i.repoLast.Query(ctx, store.NewFilter().In(field.CommodityHash, hashs), &lasts); err != nil {
+		logx.Error("get last commodity failed", "hashs", hashs, "error", err)
 		return err
 	}
 	nowTime := time.Now()
@@ -64,18 +64,18 @@ func (i *inventoryImpl) saveLast(ctx context.Context, info *coModel.EntireBatch)
 		}
 		l, ok := newInfos[c.Hash]
 		if !ok {
-			l := &model.LastCommodity{
-				ID:        uuid.NewString(),
-				CreatedAt: nowTime,
-				UpdatedAt: nowTime,
-				Commodity: *c,
+			l = &model.LastCommodity{
+				ID:           uuid.NewString(),
+				CreatedAt:    nowTime,
+				UpdatedAt:    nowTime,
+				RefCommodity: c.CloneRef(),
 			}
 			newInfos[c.Hash] = l
 		}
 		l.Count = sig * c.Count
 	}
 	for _, l := range oldInfos {
-		if err := i.repoLast.Update(ctx, store.NewFilter().Eq(field.Hash, l.Hash), l); err != nil {
+		if err := i.repoLast.Update(ctx, store.NewFilter().Eq(field.CommodityHash, l.Hash), l); err != nil {
 			logx.Error("inventory upate last fail", "id", l.ID, "error", err)
 			return err
 		}
@@ -91,6 +91,7 @@ func (i *inventoryImpl) saveLast(ctx context.Context, info *coModel.EntireBatch)
 
 // Consume 减少库存
 func (i *inventoryImpl) save(ctx context.Context, info *coModel.EntireBatch) error {
+	info.Normalize()
 	if err := i.saveFull(ctx, info); err != nil {
 		return err
 	}

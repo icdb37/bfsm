@@ -71,6 +71,11 @@ type CommodityAttr struct {
 	Value string `json:"value"`
 }
 
+// Normalize -
+func (a *CommodityAttr) Normalize() {
+	utils.PstrTrims(&a.Name, &a.Value)
+}
+
 // Commodity 商品
 type Commodity struct {
 	Hash     string           `json:"hash" xorm:"char(32) 'hash'"`
@@ -84,6 +89,21 @@ type Commodity struct {
 	Attrs    []*CommodityAttr `json:"attrs" xorm:"json 'attrs'"`
 }
 
+// CloneRef 克隆商品引用
+func (c *Commodity) CloneRef() RefCommodity {
+	return RefCommodity{
+		Hash:     c.Hash,
+		Name:     c.Name,
+		Desc:     c.Desc,
+		Spec:     c.Spec,
+		Size:     c.Size,
+		Validity: c.Validity,
+		Price:    c.Price,
+		Count:    c.Count,
+		Attrs:    c.Attrs,
+	}
+}
+
 func (c *Commodity) GetHash() string {
 	return utils.Hash(c.Name, c.Spec, c.Size)
 }
@@ -93,6 +113,7 @@ func (c *Commodity) Normalize() {
 	for _, attr := range c.Attrs {
 		utils.PstrTrims(&attr.Name, &attr.Value)
 	}
+	c.Hash = c.GetHash()
 }
 
 // QueryCommodity - 查询商品
@@ -107,6 +128,13 @@ type QueryCommodity struct {
 	Size string `json:"size,omitempty" where:"regex,size,omitempty"`
 	// Count 数量
 	Count RangeX[uint32] `json:"count,omitempty" where:"range,count,omitempty"`
+	// Hash 商品哈希值
+	Hash string `json:"hash,omitempty" where:"eq,hash,omitempty"`
+}
+
+// Normalize 归一化查询商品参数
+func (q *QueryCommodity) Normalize() {
+	utils.PstrTrims(&q.Name, &q.Desc, &q.Spec, &q.Size, &q.Hash)
 }
 
 // SimpleCompany 简单公司信息
@@ -115,15 +143,14 @@ type SimpleCompany struct {
 	Name string `json:"name" xorm:"varchar(100) 'name'"`
 }
 
+// Normalize 归一化企业信息
+func (c *SimpleCompany) Normalize() {
+	utils.PstrTrims(&c.Name, &c.Name)
+}
+
 // TableName 表名
 func (c *SimpleCompany) TableName() string {
 	return featc.GetTableName(featc.CompanyCompany)
-}
-
-// RefCompany RefCompany
-type RefCompany struct {
-	CompanyID   string `json:"company_id" xorm:"char(36) 'company_id'"`
-	CompanyName string `json:"company_name" xorm:"varchar(100) 'company_name'"`
 }
 
 // EntireBatch 批次信息
@@ -136,6 +163,15 @@ type EntireBatch struct {
 	CreatedAt  time.Time       `json:"createdAt" xorm:"created 'created_at'"`
 	UpdatedAt  time.Time       `json:"updatedAt" xorm:"updated 'updated_at'"`
 	SourceCode enum.SourceCode `json:"source_code" xorm:"tinyint 'source_code'"`
+}
+
+// Normalize 归一化批次信息
+func (b *EntireBatch) Normalize() {
+	utils.PstrTrims(&b.ID, &b.Desc, &b.Storage)
+	b.Company.Normalize()
+	for _, c := range b.Commodity {
+		c.Normalize()
+	}
 }
 
 // QueryBatch - 查询批次
