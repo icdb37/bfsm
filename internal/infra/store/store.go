@@ -1,16 +1,20 @@
 package store
 
-import "context"
+import (
+	"context"
+)
 
 // BuildFilter 构建过滤条件
 type BuildFilter func() Filter
 type UnmarshalWhere func(v any) Filter
 type BuildTable func(v TableNamer) (Tabler, error)
+type SessionProcess func(ctx context.Context, fs ...*SessionStatement) error
 
 // NewFilter 创建过滤条件
 var NewFilter BuildFilter
 var Unmarshal UnmarshalWhere
 var NewTable BuildTable
+var Transaction SessionProcess
 
 // Filter 过滤条件接口
 type Filter interface {
@@ -52,8 +56,8 @@ type Tabler interface {
 	Update(ctx context.Context, w Filter, v any) error
 	// Delete 删除数据
 	Delete(ctx context.Context, w Filter) error
-	// CreateIndex 创建索引
-	CreateIndex(ctx context.Context, keys ...string) error
+	// TableName 获取表名
+	TableName() string
 }
 
 // Namer 表名
@@ -63,10 +67,11 @@ type TableNamer interface {
 }
 
 // Init 初始化
-func Init(f BuildFilter, w UnmarshalWhere, t BuildTable) {
+func Init(f BuildFilter, w UnmarshalWhere, t BuildTable, p SessionProcess) {
 	NewFilter = f
 	Unmarshal = w
 	NewTable = t
+	Transaction = p
 }
 
 // PageFilter 分页过滤条件
@@ -94,4 +99,10 @@ func NewPageFilter() *PageFilter {
 // Wgetter 过滤条件获取器
 type Wgetter interface {
 	GetxWhere() (any, []any)
+}
+
+// SessionStatement 会话语句
+type SessionStatement struct {
+	Repo    Tabler
+	Process func(context.Context, Tabler) error
 }

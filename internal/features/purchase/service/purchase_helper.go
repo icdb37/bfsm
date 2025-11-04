@@ -11,9 +11,8 @@ import (
 // saveInventory 保存库存
 func (p *purchaseImpl) saveInventory(ctx context.Context, info *model.EntirePurchase) error {
 	for _, c := range info.Commodities {
-		bc := &coModel.EntireBatch{
+		bc := &coModel.ProduceBatch{
 			ID:        info.ID,
-			Company:   c.Company,
 			Commodity: c.Commodities,
 		}
 		if err := p.inventory.Produce(ctx, bc); err != nil {

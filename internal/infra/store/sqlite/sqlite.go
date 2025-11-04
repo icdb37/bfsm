@@ -17,6 +17,10 @@ import (
 	"github.com/icdb37/bfsm/internal/infra/store"
 )
 
+/*
+  xorm.Session 在执行操作语句之后就会被清理
+*/
+
 var gDbe *xorm.Engine
 
 func Init() error {
@@ -44,7 +48,7 @@ func Init() error {
 	}
 	gDbe.ShowSQL(cfg.Debug)
 	gDbe.Charset("utf8mb4")
-	store.Init(NewFilter, Unmarshal, New)
+	store.Init(NewFilter, Unmarshal, New, SessionProcess)
 	return nil
 }
 
@@ -70,6 +74,11 @@ func New(v store.TableNamer) (store.Tabler, error) {
 		return nil, err
 	}
 	return s, nil
+}
+
+// TableName 获取表名
+func (s *sqlite) TableName() string {
+	return s.table
 }
 
 // Total 统计数量
@@ -124,16 +133,18 @@ func (s *sqlite) Query(ctx context.Context, f store.Filter, v any) (err error) {
 
 // Insert 插入数据
 func (s *sqlite) Insert(ctx context.Context, vs ...any) error {
-	for _, v := range vs {
-		if _, err := s.db.Table(s.table).Insert(v); err != nil {
-			return err
-		}
+	if len(vs) == 0 {
+		return nil
 	}
-	return nil
+	_, err := s.db.Table(s.table).InsertMulti(&vs)
+	return err
 }
 
 // Upsert 更新数据
 func (s *sqlite) Upsert(ctx context.Context, f store.Filter, v any) error {
+	if v == nil {
+		return nil
+	}
 	sess := s.db.Table(s.table)
 	UseWhere(sess, f)
 	count, err := sess.Update(v)
@@ -153,6 +164,9 @@ func (s *sqlite) Upsert(ctx context.Context, f store.Filter, v any) error {
 
 // Update 修改数据
 func (s *sqlite) Update(ctx context.Context, f store.Filter, v any) error {
+	if v == nil {
+		return nil
+	}
 	sess := s.db.Table(s.table)
 	UseWhere(sess, f)
 	_, err := sess.Update(v)

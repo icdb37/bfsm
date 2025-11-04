@@ -18,6 +18,10 @@ const (
 
 	// InventoryInventory - 库存管理-库存信息
 	InventoryInventory = "inventory.inventory"
+	// InventoryInventoryLast - 库存管理-最新库存信息
+	InventoryInventoryLast = "inventory.inventory.last"
+	// InventoryInventoryFull - 库存管理-全量库存信息
+	InventoryInventoryFull = "inventory.inventory.full"
 	// InventoryProduce - 库存管理-采购订单库存信息
 	InventoryProduce = "inventory.produce"
 	// InventoryConsume - 库存管理-销售订单库存信息

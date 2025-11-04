@@ -17,11 +17,10 @@ type ExtraCost struct {
 
 // CompanyCommodity 公司商品
 type CompanyCommodity struct {
-	Commodities []*coModel.Commodity   `json:"commodities" xorm:"json 'commodities'" cfpx:"commodities"` //商品费用
-	Extras      []*ExtraCost           `json:"extras" xorm:"json 'extras'" cfpx:"extras"`                //额外费用
-	Company     *coModel.SimpleCompany `json:"company" xorm:"json 'company'"`
-	TotalAmount uint32                 `json:"total_amount" xorm:"int 'total_amount'"` //总共金额，分
-	ClearAmount uint32                 `json:"clear_amount" xorm:"int 'clear_amount'"` //已结算金额，分
+	Commodities []*coModel.ProduceCommodity `json:"commodities" xorm:"json 'commodities'" cfpx:"commodities"` //商品费用
+	Extras      []*ExtraCost                `json:"extras" xorm:"json 'extras'" cfpx:"extras"`                //额外费用
+	TotalAmount uint32                      `json:"total_amount" xorm:"int 'total_amount'"`                   //总共金额，分
+	ClearAmount uint32                      `json:"clear_amount" xorm:"int 'clear_amount'"`                   //已结算金额，分
 }
 
 // EntirePurchase 采购订单

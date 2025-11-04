@@ -3,7 +3,6 @@ package model
 import (
 	"time"
 
-	"github.com/icdb37/bfsm/internal/constx/enum"
 	"github.com/icdb37/bfsm/internal/constx/featc"
 	"github.com/icdb37/bfsm/internal/utils"
 )
@@ -92,15 +91,15 @@ type Commodity struct {
 // CloneRef 克隆商品引用
 func (c *Commodity) CloneRef() RefCommodity {
 	return RefCommodity{
-		Hash:     c.Hash,
-		Name:     c.Name,
-		Desc:     c.Desc,
-		Spec:     c.Spec,
-		Size:     c.Size,
-		Validity: c.Validity,
-		Price:    c.Price,
-		Count:    c.Count,
-		Attrs:    c.Attrs,
+		CommodityHash:     c.Hash,
+		CommodityName:     c.Name,
+		CommodityDesc:     c.Desc,
+		CommoditySpec:     c.Spec,
+		CommoditySize:     c.Size,
+		CommodityValidity: c.Validity,
+		CommodityPrice:    c.Price,
+		CommodityCount:    c.Count,
+		CommodityAttrs:    c.Attrs,
 	}
 }
 
@@ -151,43 +150,4 @@ func (c *SimpleCompany) Normalize() {
 // TableName 表名
 func (c *SimpleCompany) TableName() string {
 	return featc.GetTableName(featc.CompanyCompany)
-}
-
-// EntireBatch 批次信息
-type EntireBatch struct {
-	ID         string          `json:"id" xorm:"varchar(50) 'id'"`
-	Desc       string          `json:"desc" xorm:"varchar(200) 'desc'" validate:"required"`
-	Storage    string          `json:"storage" xorm:"varchar(100) 'storage'" cfpx:"storage"` // 存储位置
-	Commodity  []*Commodity    `json:"commodity" xorm:"json 'commodity'" cfpx:"commodity"`   //商品费用
-	Company    *SimpleCompany  `json:"company" xorm:"json 'company'" cfpx:"company"`
-	CreatedAt  time.Time       `json:"createdAt" xorm:"created 'created_at'"`
-	UpdatedAt  time.Time       `json:"updatedAt" xorm:"updated 'updated_at'"`
-	SourceCode enum.SourceCode `json:"source_code" xorm:"tinyint 'source_code'"`
-}
-
-// Normalize 归一化批次信息
-func (b *EntireBatch) Normalize() {
-	utils.PstrTrims(&b.ID, &b.Desc, &b.Storage)
-	b.Company.Normalize()
-	for _, c := range b.Commodity {
-		c.Normalize()
-	}
-}
-
-// QueryBatch - 查询批次
-type QueryBatch struct {
-	// ID 批次ID
-	ID string `json:"id,omitempty" where:"regex,id,omitempty"`
-	// Desc 备注
-	Desc string `json:"desc,omitempty" where:"regex,desc,omitempty"`
-	// Storage 存储位置
-	Storage string `json:"storage,omitempty" where:"regex,storage,omitempty"`
-	// CompanyName 公司名称
-	CompanyName string `json:"company_name,omitempty" where:"regex,company_name,omitempty"`
-	// CommodityName 商品名称
-	CommodityName string `json:"commodity_name,omitempty" where:"regex,commodity,omitempty"`
-	// CreatedAt 范围搜索
-	CreatedAt RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
-	// UpdatedAt 范围搜索
-	UpdatedAt RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
 }

@@ -36,7 +36,7 @@ func (u *inventoryHandler) searchLast(c echo.Context) error {
 
 func (u *inventoryHandler) searchFull(c echo.Context) error {
 	ctx := c.Request().Context()
-	req := &coModel.SearchRequest[model.QueryFullCommodity]{}
+	req := &coModel.SearchRequest[coModel.QueryProduceCommodity]{}
 	if err := c.Bind(req); err != nil {
 		logx.Error("search commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
@@ -50,7 +50,7 @@ func (u *inventoryHandler) searchFull(c echo.Context) error {
 }
 
 func (u *inventoryHandler) produce(c echo.Context) error {
-	info := &coModel.EntireBatch{}
+	info := &coModel.ProduceBatch{}
 	ctx := c.Request().Context()
 	if err := c.Bind(info); err != nil {
 		logx.Error("produce commodity bind failed", "error", err)
@@ -65,7 +65,7 @@ func (u *inventoryHandler) produce(c echo.Context) error {
 }
 
 func (u *inventoryHandler) consume(c echo.Context) error {
-	info := &coModel.EntireBatch{}
+	info := &coModel.ConsumeBatch{}
 	ctx := c.Request().Context()
 	if err := c.Bind(info); err != nil {
 		logx.Error("consume commodity bind failed", "error", err)
@@ -96,7 +96,7 @@ func (u *inventoryHandler) updateLast(c echo.Context) error {
 
 func (u *inventoryHandler) updateFull(c echo.Context) error {
 	ctx := c.Request().Context()
-	req := &model.FullCommodity{}
+	req := &coModel.ProduceCommodity{}
 	if err := c.Bind(req); err != nil {
 		logx.Error("update full commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)

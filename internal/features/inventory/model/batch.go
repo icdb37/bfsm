@@ -6,7 +6,7 @@ import (
 )
 
 // ProduceBatch 库存采购
-type ProduceBatch coModel.EntireBatch
+type ProduceBatch coModel.ProduceBatch
 
 // TableName 数据库表名
 func (e *ProduceBatch) TableName() string {
@@ -15,18 +15,5 @@ func (e *ProduceBatch) TableName() string {
 
 // GetFeature 特征
 func (e *ProduceBatch) GetFeature() string {
-	return featc.InventoryProduce
-}
-
-// ConsumeBatch 库存销售
-type ConsumeBatch coModel.EntireBatch
-
-// TableName 数据库表名
-func (e *ConsumeBatch) TableName() string {
-	return featc.GetTableName(featc.InventoryConsume)
-}
-
-// GetFeature 特征
-func (e *ConsumeBatch) GetFeature() string {
 	return featc.InventoryProduce
 }
