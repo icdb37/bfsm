@@ -9,16 +9,22 @@ import (
 )
 
 // saveInventory 保存库存
-func (p *purchaseImpl) saveInventory(ctx context.Context, info *model.EntirePurchase) error {
+func (p *purchaseImpl) saveInventory(ctx context.Context, info *model.PurchaseBatch) error {
+	bg := &coModel.BatchGoods{
+		RefBatch: info.GetBatch(),
+	}
 	for _, c := range info.Companies {
-		bc := &coModel.ProduceBatch{
-			ID: info.PurchaseID,
+		for _, g := range c.Goods {
+			d := &coModel.RefGoods{
+				Goods:      *g,
+				RefCompany: c.Company,
+			}
+			bg.Datas = append(bg.Datas, d)
 		}
-		logx.Info("produce inventory", "commodity", c)
-		if err := p.inventory.Produce(ctx, bc); err != nil {
-			logx.Error("produce inventory failed", "error", err)
-			return err
-		}
+	}
+	if err := p.inventory.Save(ctx, bg); err != nil {
+		logx.Error("save purchase inventory failed", "error", err)
+		return err
 	}
 	return nil
 }

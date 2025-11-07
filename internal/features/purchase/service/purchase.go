@@ -17,54 +17,54 @@ import (
 
 type purchaseImpl struct {
 	repo      store.Tabler
-	inventory coService.InventoryProducer
+	inventory coService.InventorySaver
 }
 
-func (p *purchaseImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchase]) (resp *coModel.SearchResponse[model.EntirePurchase], err error) {
+func (p *purchaseImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchase]) (resp *coModel.SearchResponse[model.SimplePurchase], err error) {
 	qf := store.Unmarshal(req.Query)
-	resp = &coModel.SearchResponse[model.EntirePurchase]{}
+	resp = &coModel.SearchResponse[model.SimplePurchase]{}
 	pf := req.GetPage()
 	if resp.Total, err = p.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
-		logx.Error("search purchase failed", "error", err)
+		logx.Error("search purchase batch failed", "error", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (p *purchaseImpl) Get(ctx context.Context, id string) (*model.EntirePurchase, error) {
-	info := &model.EntirePurchase{}
+func (p *purchaseImpl) Get(ctx context.Context, id string) (*model.PurchaseBatch, error) {
+	info := &model.PurchaseBatch{}
 	if err := p.repo.Query(ctx, store.NewFilter().Eq(field.ID, id), info); err != nil {
-		logx.Error("get purchase failed", "error", err)
+		logx.Error("get purchase batch failed", "error", err)
 		return nil, err
 	}
 	if info.PurchaseID == "" {
-		logx.Error("get purchase failed", "error", "purchase not found", "id", id)
+		logx.Error("get purchase batch not found", "id", id)
 		return nil, errx.NewNexist("采购订单不存在")
 	}
 	return info, nil
 }
 
-func (p *purchaseImpl) Create(ctx context.Context, info *model.EntirePurchase) error {
-	logx.Info("create purchase", "info", info)
+func (p *purchaseImpl) Create(ctx context.Context, info *model.PurchaseBatch) error {
+	logx.Info("create purchase batch", "info", info)
 	if err := utils.ProcessAll(ctx, info, cfpx.ProcessCreate); err != nil {
-		logx.Error("create purchase failed", "error", err)
+		logx.Error("create purchase batch failed", "error", err)
 		return err
 	}
 	if err := p.repo.Insert(ctx, info); err != nil {
-		logx.Error("create purchase failed", "error", err)
+		logx.Error("create purchase batch failed", "error", err)
 		return err
 	}
 	return nil
 }
 
-func (p *purchaseImpl) Update(ctx context.Context, info *model.EntirePurchase) error {
+func (p *purchaseImpl) Update(ctx context.Context, info *model.PurchaseBatch) error {
 	if err := utils.ProcessAll(ctx, info, cfpx.ProcessUpdate); err != nil {
-		logx.Error("update purchase failed", "error", err)
+		logx.Error("update purchase batch failed", "error", err)
 		return err
 	}
 	where := store.NewFilter().Eq(field.ID, info.PurchaseID)
 	if err := p.repo.Update(ctx, where, info); err != nil {
-		logx.Error("update purchase failed", "error", err)
+		logx.Error("update purchase batch failed", "error", err)
 		return err
 	}
 	return nil
@@ -77,7 +77,7 @@ func (p *purchaseImpl) Complete(ctx context.Context, id string) error {
 		return err
 	}
 	if info.StatusCode == enum.StatusCodeCompleted {
-		logx.Error("complete purchase failed", "error", "purchase already completed", "id", id)
+		logx.Error("complete purchase batch already completed", "id", id)
 		return errx.NewErrStatus("采购订单已完成")
 	}
 	return p.saveInventory(ctx, info)
@@ -85,7 +85,7 @@ func (p *purchaseImpl) Complete(ctx context.Context, id string) error {
 
 func (p *purchaseImpl) Delete(ctx context.Context, id string) error {
 	if err := p.repo.Delete(ctx, store.NewFilter().Eq(field.ID, id)); err != nil {
-		logx.Error("delete purchase failed", "error", err)
+		logx.Error("delete purchase batch failed", "error", err)
 		return err
 	}
 	return nil

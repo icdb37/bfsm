@@ -4,8 +4,9 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/icdb37/bfsm/internal/infra/store"
 	"xorm.io/xorm"
+
+	"github.com/icdb37/bfsm/internal/infra/store"
 )
 
 type aggregate struct {

@@ -57,10 +57,6 @@ type SimplePurchase struct {
 	ExtraAmount int32 `json:"extra_amount" xorm:"int 'extra_amount'" cfpx:"extra_amount"`
 	// TotalAmount 采购订单金额，分
 	TotalAmount int32 `json:"total_amount" xorm:"int 'total_amount'" cfpx:"total_amount"`
-	// AmountStatus 结算状态
-	AmountStatus enum.AmountStatus `json:"amount_status" xorm:"varchar(20) 'amount_status'"`
-	// AmountDesc 结算描述
-	AmountDesc string `json:"amount_desc" xorm:"varchar(200) 'amount_desc'" cfpx:"desc"`
 	// StatusFlow 状态流程
 	StatusFlow uint16 `json:"status_flow" xorm:"int 'status_flow'" cfpx:"status_flow"`
 	// StatusCode 状态数值
@@ -71,7 +67,6 @@ func (e *SimplePurchase) Normalize() {
 	e.GoodsAmount = 0
 	e.ExtraAmount = 0
 	e.TotalAmount = 0
-	e.AmountStatus = enum.AmountStatusUnpaid
 }
 
 // TableName 采购订单表名
@@ -89,21 +84,17 @@ type PurchaseCompany struct {
 	// Goods 企业商品列表
 	Goods []*coModel.Goods `json:"goods" xorm:"json 'goods'" cfpx:"goods"`
 	// Company 企业信息
-	Company coModel.SimpleCompany `json:"company" xorm:"json 'company'" cfpx:"company"`
+	Company coModel.RefCompany `json:"company" xorm:"json 'company'" cfpx:"company"`
 	// GoodsAmount 企业商品金额，分
 	GoodsAmount int32 `json:"goods_amount" xorm:"int 'goods_amount'"`
 	// ExtraAmount 企业额外费用金额，分
 	ExtraAmount int32 `json:"extra_amount" xorm:"int 'extra_amount'"`
 	// TotalAmount 企业采购总金额，分
 	TotalAmount int32 `json:"total_amount" xorm:"int 'total_amount'"`
-	// AmountStatus 结算状态
-	AmountStatus enum.AmountStatus `json:"amount_status" xorm:"tinyint 'amount_status'"`
-	// AmountDesc 结算描述
-	AmountDesc string `json:"amount_desc" xorm:"varchar(200) 'amount_desc'" cfpx:"desc"`
 }
 
-// EntirePurchase 采购详情
-type EntirePurchase struct {
+// PurchaseBatch 采购批次
+type PurchaseBatch struct {
 	SimplePurchase `json:",inline" xorm:"extends"`
 	// Extras 额外费用列表
 	Extras []*ExtraExpense `json:"extras" xorm:"json 'extras'" cfpx:"extras"`
@@ -111,7 +102,17 @@ type EntirePurchase struct {
 	Companies []*PurchaseCompany `json:"companies" xorm:"json 'companies'"`
 }
 
-func (e *EntirePurchase) Normalize() {
+func (e *PurchaseBatch) GetBatch() coModel.RefBatch {
+	return coModel.RefBatch{
+		BatchID:    e.PurchaseID,
+		BatchName:  e.PurchaseName,
+		BatchDesc:  e.PurchaseDesc,
+		SourceCode: enum.SourceCodePurchaseProduce,
+	}
+}
+
+// Normalize -
+func (e *PurchaseBatch) Normalize() {
 	e.SimplePurchase.Normalize()
 	for _, t := range e.Extras {
 		e.ExtraAmount += t.Amount

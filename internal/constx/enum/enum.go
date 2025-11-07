@@ -1,16 +1,6 @@
 // Package enum 枚举
 package enum
 
-// StatusCode 状态码
-type StatusCode uint16
-
-const (
-	// StatusCodeUndefined 未定义
-	StatusCodeUndefined StatusCode = 0
-	// StatusCodeCompleted 已完成
-	StatusCodeCompleted StatusCode = 10000
-)
-
 // SourceCode 来源
 type SourceCode int8
 
@@ -57,20 +47,20 @@ const (
 	AccountDealIncome AccountDeal = 1
 )
 
-// AccountStatus 账单状态
-type AccountStatus uint8
+// StatusCode 账单状态
+type StatusCode uint8
 
 const (
-	// AccountStatusUndefined 未定义
-	AccountStatusUndefined AccountStatus = iota
-	// AccountStatusSubmitted 已提交
-	AccountStatusSubmitted
-	// AccountStatusApproved 已审核
-	AccountStatusApproved
-	// AccountStatusCompleted 已完成
-	AccountStatusCompleted
-	// AccountStatusCanceled 已取消
-	AccountStatusCanceled
-	// AccountStatusClosed 已关闭
-	AccountStatusClosed
+	// StatusCodeUndefined 未定义
+	StatusCodeUndefined StatusCode = iota
+	// StatusCodeSubmitted 已提交
+	StatusCodeSubmitted
+	// StatusCodeApproved 已审核
+	StatusCodeApproved
+	// StatusCodeCompleted 已完成
+	StatusCodeCompleted
+	// StatusCodeCanceled 已取消
+	StatusCodeCanceled
+	// StatusCodeClosed 已关闭
+	StatusCodeClosed
 )

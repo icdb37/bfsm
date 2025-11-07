@@ -36,7 +36,7 @@ func (u *inventoryHandler) searchLast(c echo.Context) error {
 
 func (u *inventoryHandler) searchFull(c echo.Context) error {
 	ctx := c.Request().Context()
-	req := &coModel.SearchRequest[coModel.QueryProduceCommodity]{}
+	req := &coModel.SearchRequest[model.QueryFullGoods]{}
 	if err := c.Bind(req); err != nil {
 		logx.Error("search commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
@@ -50,7 +50,7 @@ func (u *inventoryHandler) searchFull(c echo.Context) error {
 }
 
 func (u *inventoryHandler) produce(c echo.Context) error {
-	info := &coModel.ProduceBatch{}
+	info := &coModel.BatchGoods{}
 	ctx := c.Request().Context()
 	if err := c.Bind(info); err != nil {
 		logx.Error("produce commodity bind failed", "error", err)
@@ -60,24 +60,23 @@ func (u *inventoryHandler) produce(c echo.Context) error {
 		logx.Error("produce commodity failed", "error", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	logx.Info("produce commodity success", field.ID, info.ID)
-	return c.JSON(http.StatusOK, coModel.NewIDResponse(info.ID))
+	logx.Info("produce commodity success", field.ID, info.BatchID)
+	return c.JSON(http.StatusOK, coModel.NewIDResponse(info.BatchID))
 }
 
 func (u *inventoryHandler) consume(c echo.Context) error {
-	info := &coModel.ConsumeBatch{}
+	info := &coModel.BatchGoods{}
 	ctx := c.Request().Context()
 	if err := c.Bind(info); err != nil {
 		logx.Error("consume commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	info.ID = c.Param(field.ID)
 	if err := u.c.Consume(ctx, info); err != nil {
 		logx.Error("consume commodity failed", "error", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	logx.Info("consume commodity success", field.ID, info.ID)
-	return c.JSON(http.StatusOK, coModel.NewIDResponse(info.ID))
+	logx.Info("consume commodity success", field.ID, info.BatchID)
+	return c.JSON(http.StatusOK, coModel.NewIDResponse(info.BatchID))
 }
 func (u *inventoryHandler) updateLast(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -90,13 +89,13 @@ func (u *inventoryHandler) updateLast(c echo.Context) error {
 		logx.Error("update last commodity failed", "error", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	logx.Info("update last commodity success", field.ID, req.ID)
-	return c.JSON(http.StatusOK, coModel.NewIDResponse(req.ID))
+	logx.Info("update last commodity success", field.ID, req.LastID)
+	return c.JSON(http.StatusOK, coModel.NewIDResponse(req.LastID))
 }
 
 func (u *inventoryHandler) updateFull(c echo.Context) error {
 	ctx := c.Request().Context()
-	req := &coModel.ProduceCommodity{}
+	req := &model.FullGoods{}
 	if err := c.Bind(req); err != nil {
 		logx.Error("update full commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)

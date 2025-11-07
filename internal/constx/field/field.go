@@ -11,6 +11,8 @@ const (
 	CompanyID = "company_id"
 	// Hash 哈希
 	Hash = "hash"
+	// GoodsID 商品标识
+	GoodsID = "goods_id"
 )
 
 const (

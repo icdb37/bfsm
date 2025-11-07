@@ -15,28 +15,25 @@ import (
 // InventoryInventory 库存管理
 type InventoryInventory interface {
 	SearchLast(ctx context.Context, req *coModel.SearchRequest[model.QueryLastCommodity]) (resp *coModel.SearchResponse[model.LastCommodity], err error)
-	SearchFull(ctx context.Context, req *coModel.SearchRequest[coModel.QueryProduceCommodity]) (resp *coModel.SearchResponse[coModel.ProduceCommodity], err error)
-	UpdateFull(ctx context.Context, info *coModel.ProduceCommodity) error
+	SearchFull(ctx context.Context, req *coModel.SearchRequest[model.QueryFullGoods]) (resp *coModel.SearchResponse[model.FullGoods], err error)
+	UpdateFull(ctx context.Context, info *model.FullGoods) error
 	UpdateLast(ctx context.Context, newLast *model.LastCommodity) error
 }
 
 func Provide() {
-	repoFull, err := store.NewTable(&model.FullCommodity{})
+	repoFull, err := store.NewTable(&model.FullGoods{})
 	if err != nil {
-		logx.Fatal("create repo failed", "feature", featc.InventoryInventoryFull, "error", err)
+		logx.Fatal("create repo failed", "feature", featc.InventoryGoodsFull, "error", err)
 	}
 	repoLast, err := store.NewTable(&model.LastCommodity{})
 	if err != nil {
-		logx.Fatal("create repo failed", "feature", featc.InventoryInventoryLast, "error", err)
+		logx.Fatal("create repo failed", "feature", featc.InventoryGoodsLast, "error", err)
 	}
 	i := &inventoryImpl{repoFull: repoFull, repoLast: repoLast}
 	wire.ProvideName(featc.InventoryInventory, func() InventoryInventory {
 		return i
 	})
-	wire.ProvideName(featc.InventoryConsume, func() coService.InventoryConsumer {
-		return i
-	})
-	wire.ProvideName(featc.InventoryProduce, func() coService.InventoryProducer {
+	wire.ProvideName(featc.InventoryProduce, func() coService.InventorySaver {
 		return i
 	})
 }

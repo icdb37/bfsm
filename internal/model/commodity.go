@@ -4,152 +4,142 @@ import (
 	"time"
 
 	"github.com/icdb37/bfsm/internal/constx/enum"
-	"github.com/icdb37/bfsm/internal/constx/featc"
 	"github.com/icdb37/bfsm/internal/utils"
 )
 
-// QueryProduceCommodity 商品查询参数
-type QueryProduceCommodity struct {
-	RefQueryCommodity `json:",inline" where:",,omitempty"`
+// CommodityAttr 商品属性
+type CommodityAttr struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// Normalize -
+func (a *CommodityAttr) Normalize() {
+	utils.PstrTrims(&a.Name, &a.Value)
+}
+
+// Commodity 商品
+type Commodity struct {
+	Hash     string           `json:"hash" xorm:"char(32) 'hash'"`
+	Name     string           `json:"name" xorm:"varchar(100) 'name'" cfpx:"name"`
+	Desc     string           `json:"desc" xorm:"varchar(200) 'desc'" cfpx:"desc"`
+	Spec     string           `json:"spec" xorm:"varchar(100) 'spec'" cfpx:"spec"`
+	Size     string           `json:"size" xorm:"varchar(100) 'size'" cfpx:"size"`
+	Attrs    []*CommodityAttr `json:"attrs" xorm:"json 'attrs'"`
+	Validity int32            `json:"validity" xorm:"tinyint 'validity'" cfpx:"validity"`
+	Price    int32            `json:"price" xorm:"int 'price'" cfpx:"price"`
+}
+
+func (c *Commodity) GetHash() string {
+	return utils.Hash(c.Name, c.Spec, c.Size)
+}
+
+func (c *Commodity) Normalize() {
+	utils.PstrTrims(&c.Name, &c.Desc, &c.Spec, &c.Size)
+	for _, attr := range c.Attrs {
+		utils.PstrTrims(&attr.Name, &attr.Value)
+	}
+	c.Hash = c.GetHash()
+}
+
+// QueryCommodity - 查询商品
+type QueryCommodity struct {
+	// Name 姓名
+	Name string `json:"name,omitempty" where:"regex,name,omitempty"`
 	// Desc 备注
-	Desc string `json:"desc" where:"regex,desc,omitempty"`
-	// CreatedAt 范围搜索
-	CreatedAt RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
-	// UpdatedAt 范围搜索
-	UpdatedAt RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+	Desc string `json:"desc,omitempty" where:"regex,desc,omitempty"`
+	// Spec 规格
+	Spec string `json:"spec,omitempty" where:"regex,spec,omitempty"`
+	// Size 尺寸
+	Size string `json:"size,omitempty" where:"regex,size,omitempty"`
+	// Count 数量
+	Count RangeX[uint32] `json:"count,omitempty" where:"range,count,omitempty"`
+	// Hash 商品哈希值
+	Hash string `json:"hash,omitempty" where:"eq,hash,omitempty"`
 }
 
 // Normalize 归一化查询商品参数
-func (q *QueryProduceCommodity) Normalize() {
-	utils.PstrTrims(&q.Desc)
-	q.RefQueryCommodity.Normalize()
+func (q *QueryCommodity) Normalize() {
+	utils.PstrTrims(&q.Name, &q.Desc, &q.Spec, &q.Size, &q.Hash)
 }
 
-// ProduceCommodity 库存商品
-type ProduceCommodity struct {
-	Xid          uint32                                                   `json:"xid" xorm:"pk autoincr 'xid'"`
-	ID           string                                                   `json:"id" xorm:"char(36) unique not null 'id'"`
-	SourceCode   enum.SourceCode                                          `json:"source_code" xorm:"tinyint 'source_code'"`
-	CreatedAt    time.Time                                                `json:"created_at" xorm:"created 'created_at'"`
-	UpdatedAt    time.Time                                                `json:"updated_at" xorm:"updated 'updated_at'" cfpx:"updated_at"`
-	BatchDesc    string                                                   `json:"batch_desc" xorm:"varchar(500) 'batch_desc'" cfpx:"batch_desc"` // 批次描述
-	BatchID      string                                                   `json:"batch_id" xorm:"varchar(50) 'batch_id'"`                        // 批次标识
-	Storage      string                                                   `json:"storage" xorm:"varchar(100) 'storage'" cfpx:"storage"`          // 存储位置
-	UsedCount    int32                                                    `json:"used_count" xorm:"int 'used_count'" cfpx:"count"`               // 已用数量
-	LeftCount    int32                                                    `json:"left_count" xorm:"int 'left_count'" cfpx:"count"`               // 剩余数量
-	RefCommodity `json:",inline" xorm:"extends" cfpx:"commodity"`         // 商品
-	RefCompany   `json:",inline" xorm:"extends 'company'" cfpx:"company"` // 企业
+// Goods 货物
+type Goods struct {
+	// Commodity 商品信息
+	Commodity `json:",inline" xorm:"extends" cfpx:"commodity"`
+	// Count 数量
+	Count int32 `json:"count" xorm:"int 'count'" cfpx:"count"`
+	// Amount 商品金额，分
+	Amount int32 `json:"amount" xorm:"int 'amount'" cfpx:"amount"`
+	// ProducedAt 生产时间
+	ProducedAt time.Time `json:"produced_at" xorm:"datetime 'produced_at'" cfpx:"produced_at"`
+	// ExpiredAt 过期时间
+	ExpiredAt time.Time `json:"expired_at" xorm:"datetime 'expired_at'" cfpx:"expired_at"`
 }
 
-// TableName 数据库表名
-func (*ProduceCommodity) TableName() string {
-	return featc.GetTableName(featc.InventoryProduce)
+// QueryGoods 查询商品
+type QueryGoods struct {
+	QueryCommodity `json:",inline" where:",,omitempty"`
+	// Count 数量
+	Count RangeX[int32] `json:"count,omitempty" where:"range,count,omitempty"`
+	// Amount 商品金额，分
+	Amount RangeX[int64] `json:"amount,omitempty" where:"range,amount,omitempty"`
+	// ProducedAt 生产时间
+	ProducedAt RangeX[time.Time] `json:"produced_at,omitempty" where:"range,produced_at,omitempty"`
+	// ExpiredAt 过期时间
+	ExpiredAt RangeX[time.Time] `json:"expired_at,omitempty" where:"range,expired_at,omitempty"`
 }
 
-// GetFeature 特征
-func (*ProduceCommodity) GetFeature() string {
-	return featc.InventoryProduce
+// RefGoods 引用商品信息
+type RefGoods struct {
+	// ID 商品ID
+	ID string `json:"id" xorm:"char(36) 'id'"`
+	// Goods 商品信息
+	Goods `json:",inline" xorm:"extends"`
+	// RefCompany 引用公司信息
+	RefCompany `json:",inline" xorm:"extends"`
 }
 
-func (f *ProduceCommodity) Normalize() {
-	f.RefCommodity.Normalize()
-	f.RefCompany.Normalize()
-	utils.PstrTrims(&f.ID, &f.BatchDesc, &f.Storage)
+func (r *RefGoods) Normalize() {
+	utils.PstrTrims(&r.ID)
+	r.Goods.Normalize()
+	r.RefCompany.Normalize()
 }
 
-// ProduceBatch -
-type ProduceBatch struct {
-	ID         string              `json:"id" xorm:"varchar(50) 'id'"`
-	Desc       string              `json:"desc" xorm:"varchar(200) 'desc'" validate:"required"`
-	Storage    string              `json:"storage" xorm:"varchar(100) 'storage'" cfpx:"storage"` // 存储位置
-	Commodity  []*ProduceCommodity `json:"commodity" xorm:"json 'commodity'" cfpx:"commodity"`   //商品费用
-	CreatedAt  time.Time           `json:"createdAt" xorm:"created 'created_at'"`
-	UpdatedAt  time.Time           `json:"updatedAt" xorm:"updated 'updated_at'"`
-	SourceCode enum.SourceCode     `json:"source_code" xorm:"tinyint 'source_code'"`
+// BatchGoods 批次商品
+type BatchGoods struct {
+	Datas []*RefGoods `json:"datas" xorm:"json 'datas'"`
+	// RefBatch 批次信息
+	RefBatch `json:",inline" xorm:"extends"`
 }
 
-// Normalize -
-func (b *ProduceBatch) Normalize() {
-	utils.PstrTrims(&b.ID, &b.Desc, &b.Storage)
-	for _, c := range b.Commodity {
-		c.Normalize()
+func (l *BatchGoods) Normalize() {
+	l.RefBatch.Normalize()
+	for _, data := range l.Datas {
+		data.Normalize()
 	}
 }
 
-// QueryProduceBatch -
-type QueryProduceBatch struct {
-	// ID 批次ID
-	ID string `json:"id,omitempty" where:"regex,id,omitempty"`
-	// Desc 备注
-	Desc string `json:"desc,omitempty" where:"regex,desc,omitempty"`
-	// Storage 存储位置
-	Storage string `json:"storage,omitempty" where:"regex,storage,omitempty"`
-	// CompanyName 公司名称
-	CompanyName string `json:"company_name,omitempty" where:"regex,company_name,omitempty"`
-	// CommodityName 商品名称
-	CommodityName string `json:"commodity_name,omitempty" where:"regex,commodity,omitempty"`
-	// CreatedAt 范围搜索
-	CreatedAt RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
-	// UpdatedAt 范围搜索
-	UpdatedAt RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+// GoodsCount 商品总量
+type GoodsCount struct {
+	UpdatedAt time.Time `json:"updated_at" xorm:"updated 'updated_at'" cfpx:"updated_at"`
+	Count     int32     `json:"count" xorm:"int 'count'" cfpx:"count"`
+	UsedCount int32     `json:"used_count" xorm:"int 'used_count'" cfpx:"count"` // 已用数量
+	LeftCount int32     `json:"left_count" xorm:"int 'left_count'" cfpx:"count"` // 剩余数量
 }
 
-// ConsumeCommodity -
-type ConsumeCommodity struct {
-	RefFullID      string `json:"ref_full_id" xorm:"varchar(36) 'ref_full_id'"`              // 引用生产批次ID
-	RefBatchID     string `json:"ref_batch_id" xorm:"varchar(50) 'ref_batch_id'"`            // 引用生产批次标识
-	CommodityCount int32  `json:"commodity_count" xorm:"int 'commodity_count'" cfpx:"count"` // 商品总量
-	CommodityHash  string `json:"commodity_hash" xorm:"char(32) 'commodity_hash'"`
+// RefBatch 引用批次
+type RefBatch struct {
+	// BatchID 批次ID
+	BatchID string `json:"batch_id" xorm:"char(36) 'batch_id'"`
+	// BatchName 批次名称
+	BatchName string `json:"batch_name" xorm:"varchar(100) 'batch_name'"`
+	// BatchDesc 批次描述
+	BatchDesc string `json:"batch_desc" xorm:"varchar(200) 'batch_desc'"`
+	// SourceCode 来源
+	SourceCode enum.SourceCode `json:"source_code" xorm:"tinyint 'source_code'" cfpx:"source_code"`
 }
 
-// TableName -
-func (*ConsumeCommodity) TableName() string {
-	return featc.GetTableName(featc.InventoryConsume)
-}
-
-// GetFeature -
-func (*ConsumeCommodity) GetFeature() string {
-	return featc.InventoryConsume
-}
-
-// Normalize -
-func (b *ConsumeCommodity) Normalize() {
-
-	utils.PstrTrims(&b.RefFullID, &b.RefBatchID)
-}
-
-// ConsumeBatch -
-type ConsumeBatch struct {
-	ID         string              `json:"id" xorm:"varchar(50) 'id'"`
-	Desc       string              `json:"desc" xorm:"varchar(200) 'desc'" validate:"required"`
-	Commodity  []*ConsumeCommodity `json:"commodity" xorm:"json 'commodity'" cfpx:"commodity"` //商品费用
-	CreatedAt  time.Time           `json:"createdAt" xorm:"created 'created_at'"`
-	UpdatedAt  time.Time           `json:"updatedAt" xorm:"updated 'updated_at'"`
-	SourceCode enum.SourceCode     `json:"source_code" xorm:"tinyint 'source_code'"`
-}
-
-// Normalize -
-func (b *ConsumeBatch) Normalize() {
-	utils.PstrTrims(&b.ID, &b.Desc)
-	for _, c := range b.Commodity {
-		c.Normalize()
-	}
-}
-
-// TableName 数据库表名
-func (e *ConsumeBatch) TableName() string {
-	return featc.GetTableName(featc.InventoryConsume)
-}
-
-// GetFeature 特征
-func (e *ConsumeBatch) GetFeature() string {
-	return featc.InventoryProduce
-}
-
-// UpdateCommodityCount 修改商品总量
-type UpdateCommodityCount struct {
-	UpdatedAt      time.Time `json:"updated_at" xorm:"updated 'updated_at'" cfpx:"updated_at"`
-	CommodityCount int32     `json:"commodity_count" xorm:"int 'commodity_count'" cfpx:"count"`
-	UsedCount      int32     `json:"used_count" xorm:"int 'used_count'" cfpx:"count"` // 已用数量
-	LeftCount      int32     `json:"left_count" xorm:"int 'left_count'" cfpx:"count"` // 剩余数量
+func (l *RefBatch) Normalize() {
+	utils.PstrTrims(&l.BatchID, &l.BatchName, &l.BatchDesc)
 }

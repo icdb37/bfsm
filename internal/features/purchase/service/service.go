@@ -14,20 +14,32 @@ import (
 
 // PurchaseServer - 采购订单服务接口
 type PurchaseServer interface {
-	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchase]) (resp *coModel.SearchResponse[model.EntirePurchase], err error)
-	Create(ctx context.Context, info *model.EntirePurchase) error
-	Update(ctx context.Context, info *model.EntirePurchase) error
+	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchase]) (resp *coModel.SearchResponse[model.SimplePurchase], err error)
+	Create(ctx context.Context, info *model.PurchaseBatch) error
+	Update(ctx context.Context, info *model.PurchaseBatch) error
 	Delete(ctx context.Context, id string) error
-	Get(ctx context.Context, id string) (*model.EntirePurchase, error)
+	Get(ctx context.Context, id string) (*model.PurchaseBatch, error)
+}
+
+// GoodsServer - 商品服务接口
+type GoodsServer interface {
+	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryGoods]) (resp *coModel.SearchResponse[model.PurchaseGoods], err error)
 }
 
 func Provide() {
 	wire.ProvideName(featc.CommodityCommodity, func() PurchaseServer {
-		repo, err := store.NewTable(&model.EntirePurchase{})
+		repo, err := store.NewTable(&model.PurchaseBatch{})
 		if err != nil {
-			logx.Fatal("create purchase repo failed", "error", err)
+			logx.Fatal("create purchase batch repo failed", "error", err)
 		}
-		inventory := wire.ResolveName[coService.InventoryProducer](featc.InventoryProduce)
+		inventory := wire.ResolveName[coService.InventorySaver](featc.InventoryProduce)
 		return &purchaseImpl{repo: repo, inventory: inventory}
+	})
+	wire.ProvideName(featc.CommodityCommodity, func() GoodsServer {
+		repo, err := store.NewTable(&model.PurchaseGoods{})
+		if err != nil {
+			logx.Fatal("create purchase goods repo failed", "error", err)
+		}
+		return &goodsImpl{repo: repo}
 	})
 }

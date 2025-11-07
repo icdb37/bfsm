@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/icdb37/bfsm/internal/constx/featc"
+	"github.com/icdb37/bfsm/internal/utils"
 )
 
 // CompanyCommodity 商品
@@ -28,4 +29,31 @@ func (u *CompanyCommodity) TableName() string {
 }
 func (u *CompanyCommodity) GetFeature() string {
 	return featc.CompanyCommodity
+}
+
+// SimpleCompany 简单公司信息
+type SimpleCompany struct {
+	ID   string `json:"id" xorm:"char(36) unique not null 'id'"`
+	Name string `json:"name" xorm:"varchar(100) 'name'"`
+}
+
+// Normalize 归一化企业信息
+func (c *SimpleCompany) Normalize() {
+	utils.PstrTrims(&c.Name, &c.Name)
+}
+
+// TableName 表名
+func (c *SimpleCompany) TableName() string {
+	return featc.GetTableName(featc.CompanyCompany)
+}
+
+// RefCompany 引用企业
+type RefCompany struct {
+	CompanyID   string `json:"company_id" xorm:"char(36) 'company_id'"`
+	CompanyName string `json:"company_name" xorm:"varchar(100) 'company_name'"`
+}
+
+// Normalize -
+func (r *RefCompany) Normalize() {
+	utils.PstrTrims(&r.CompanyID, &r.CompanyName)
 }

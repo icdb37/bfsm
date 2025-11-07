@@ -32,5 +32,9 @@ type Account struct {
 	// ClearAmount 已结算金额
 	ClearAmount int32 `json:"clear_amount" xorm:"int 'clear_amount'"`
 	// Status 状态
-	Status enum.AccountStatus `json:"status" xorm:"tinyint 'status'"`
+	Status enum.StatusCode `json:"status" xorm:"tinyint 'status'"`
+	// AmountStatus 结算状态
+	AmountStatus enum.AmountStatus `json:"amount_status" xorm:"tinyint 'amount_status'"`
+	// AmountDesc 结算描述
+	AmountDesc string `json:"amount_desc" xorm:"varchar(200) 'amount_desc'" cfpx:"desc"`
 }

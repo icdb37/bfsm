@@ -15,15 +15,15 @@ const (
 
 	// PurchaseBatch - 采购订单管理-采购订单批次信息
 	PurchaseBatch = "purchase.batch"
-	// PurchaseCommodity - 采购订单管理-采购订单商品信息
-	PurchaseCommodity = "purchase.commodity"
+	// PurchaseGoods - 采购订单管理-采购订单货物信息
+	PurchaseGoods = "purchase.goods"
 
 	// InventoryInventory - 库存管理-库存信息
 	InventoryInventory = "inventory.inventory"
-	// InventoryInventoryLast - 库存管理-最新库存信息
-	InventoryInventoryLast = "inventory.inventory.last"
-	// InventoryInventoryFull - 库存管理-全量库存信息
-	InventoryInventoryFull = "inventory.inventory.full"
+	// InventoryGoodsLast - 库存管理-最新库存信息
+	InventoryGoodsLast = "inventory.goods.last"
+	// InventoryGoodsFull - 库存管理-全量库存信息
+	InventoryGoodsFull = "inventory.goods.full"
 	// InventoryProduce - 库存管理-采购订单库存信息
 	InventoryProduce = "inventory.produce"
 	// InventoryConsume - 库存管理-销售订单库存信息
