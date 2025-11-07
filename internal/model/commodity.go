@@ -53,7 +53,7 @@ type QueryCommodity struct {
 	// Size 尺寸
 	Size string `json:"size,omitempty" where:"regex,size,omitempty"`
 	// Count 数量
-	Count RangeX[uint32] `json:"count,omitempty" where:"range,count,omitempty"`
+	Count *RangeX[uint32] `json:"count,omitempty" where:"range,count,omitempty"`
 	// Hash 商品哈希值
 	Hash string `json:"hash,omitempty" where:"eq,hash,omitempty"`
 }
@@ -75,19 +75,29 @@ type Goods struct {
 	ProducedAt time.Time `json:"produced_at" xorm:"datetime 'produced_at'" cfpx:"produced_at"`
 	// ExpiredAt 过期时间
 	ExpiredAt time.Time `json:"expired_at" xorm:"datetime 'expired_at'" cfpx:"expired_at"`
+	// Storeage 存储位置
+	Storeage string `json:"storeage" xorm:"varchar(100) 'storeage'" cfpx:"storeage"`
 }
 
-// QueryGoods 查询商品
-type QueryGoods struct {
+// QueryRefGoods 查询商品
+type QueryRefGoods struct {
+	// QueryCommodity 查询商品
 	QueryCommodity `json:",inline" where:",,omitempty"`
+	// RefCompany 引用企业
+	QueryRefCompany `json:",inline" where:",,omitempty"`
 	// Count 数量
-	Count RangeX[int32] `json:"count,omitempty" where:"range,count,omitempty"`
+	Count *RangeX[int32] `json:"count,omitempty" where:"range,count,omitempty"`
 	// Amount 商品金额，分
-	Amount RangeX[int64] `json:"amount,omitempty" where:"range,amount,omitempty"`
+	Amount *RangeX[int64] `json:"amount,omitempty" where:"range,amount,omitempty"`
 	// ProducedAt 生产时间
-	ProducedAt RangeX[time.Time] `json:"produced_at,omitempty" where:"range,produced_at,omitempty"`
+	ProducedAt *RangeX[time.Time] `json:"produced_at,omitempty" where:"range,produced_at,omitempty"`
 	// ExpiredAt 过期时间
-	ExpiredAt RangeX[time.Time] `json:"expired_at,omitempty" where:"range,expired_at,omitempty"`
+	ExpiredAt *RangeX[time.Time] `json:"expired_at,omitempty" where:"range,expired_at,omitempty"`
+}
+
+func (q *QueryRefGoods) Normalize() {
+	q.QueryCommodity.Normalize()
+	q.QueryRefCompany.Normalize()
 }
 
 // RefGoods 引用商品信息
@@ -126,6 +136,23 @@ type GoodsCount struct {
 	Count     int32     `json:"count" xorm:"int 'count'" cfpx:"count"`
 	UsedCount int32     `json:"used_count" xorm:"int 'used_count'" cfpx:"count"` // 已用数量
 	LeftCount int32     `json:"left_count" xorm:"int 'left_count'" cfpx:"count"` // 剩余数量
+}
+
+// QueryRefBatch 查询批次
+type QueryRefBatch struct {
+	// BatchID 批次ID
+	BatchID string `json:"batch_id,omitempty" where:"eq,batch_id,omitempty"`
+	// BatchName 批次名称
+	BatchName string `json:"batch_name,omitempty" where:"regex,batch_name,omitempty"`
+	// BatchDesc 批次描述
+	BatchDesc string `json:"batch_desc,omitempty" where:"regex,batch_desc,omitempty"`
+	// SourceCode 来源
+	SourceCode enum.SourceCode `json:"source_code,omitempty" where:"eq,source_code,omitempty"`
+}
+
+// Normalize -
+func (q *QueryRefBatch) Normalize() {
+	utils.PstrTrims(&q.BatchID, &q.BatchName, &q.BatchDesc)
 }
 
 // RefBatch 引用批次

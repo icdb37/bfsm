@@ -24,10 +24,8 @@ const (
 	InventoryGoodsLast = "inventory.goods.last"
 	// InventoryGoodsFull - 库存管理-全量库存信息
 	InventoryGoodsFull = "inventory.goods.full"
-	// InventoryProduce - 库存管理-采购订单库存信息
-	InventoryProduce = "inventory.produce"
-	// InventoryConsume - 库存管理-销售订单库存信息
-	InventoryConsume = "inventory.consume"
+	// InventorySave - 库存管理-库存信息
+	InventorySave = "inventory.save"
 
 	// User - 用户模块
 	User = "user"

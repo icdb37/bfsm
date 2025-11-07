@@ -11,10 +11,9 @@ import (
 
 func Wire() {
 	s := wire.ResolveName[service.InventoryInventory](featc.InventoryInventory)
-	p := wire.ResolveName[coService.InventoryProducer](featc.InventoryProduce)
-	c := wire.ResolveName[coService.InventoryConsumer](featc.InventoryConsume)
+	p := wire.ResolveName[coService.InventorySaver](featc.InventorySave)
 	e := wire.Resolve[*echo.Echo]()
-	u := &inventoryHandler{s: s, p: p, c: c}
+	u := &inventoryHandler{i: s, s: p}
 	g := e.Group("/api/v1/inventory")
 	{
 		g.POST("/last/search", u.searchLast)

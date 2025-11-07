@@ -25,6 +25,7 @@ func (i *inventoryImpl) b2pCommodity(info *coModel.BatchGoods) func(p *coModel.R
 			RefGoods:  *p,
 			LeftCount: p.Count,
 		}
+		fc.ID = uuid.NewString()
 		fc.Normalize()
 		return fc
 	}
@@ -56,7 +57,7 @@ func (i *inventoryImpl) saveProduceStatement(ctx context.Context, info *coModel.
 		l, ok := newLasts[c.Hash]
 		if !ok {
 			l = &model.LastCommodity{
-				LastID:    uuid.NewString(),
+				ID:        uuid.NewString(),
 				CreatedAt: nowTime,
 				UpdatedAt: nowTime,
 				Commodity: c.Commodity,
@@ -123,8 +124,8 @@ func (i *inventoryImpl) saveConsumeStatement(ctx context.Context, info *coModel.
 		}
 		p.UsedCount += c.Count
 		if p.UsedCount > p.Count {
-			logx.Error("consume commodity count not enough", "left_count", p.Count-p.UsedCount, "consume_count", c.Count, "ref_goods_id", c.ID, "error", err)
-			return nil, errx.NewErrParam("", "引用商品【%s】库存不足，批次【%s】库存剩余 %d", p.Name, p.BatchDesc, p.Count-p.UsedCount)
+			logx.Error("consume commodity count not enough", "left_count", p.LeftCount, "consume_count", c.Count, "ref_goods_id", c.ID, "error", err)
+			return nil, errx.NewErrParam("", "引用商品【%s】库存不足，批次【%s】库存剩余 %d", p.Name, p.BatchDesc, p.LeftCount)
 		}
 		c.Hash = p.Hash
 		hashs = append(hashs, p.Hash)
@@ -168,7 +169,7 @@ func (i *inventoryImpl) saveConsumeStatement(ctx context.Context, info *coModel.
 			Repo: i.repoLast,
 			Process: func(ctx context.Context, tab store.Tabler) error {
 				return tab.Update(ctx,
-					store.NewFilter().Eq(field.ID, l.LastID),
+					store.NewFilter().Eq(field.ID, l.ID),
 					&coModel.GoodsCount{
 						UpdatedAt: nowTime,
 						Count:     l.Count,

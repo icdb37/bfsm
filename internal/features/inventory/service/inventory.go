@@ -34,9 +34,6 @@ func (i *inventoryImpl) SearchLast(ctx context.Context, req *coModel.SearchReque
 
 func (i *inventoryImpl) SearchFull(ctx context.Context, req *coModel.SearchRequest[model.QueryFullGoods]) (resp *coModel.SearchResponse[model.FullGoods], err error) {
 	req.Query.Normalize()
-	if req.Query.Hash == "" {
-		return nil, errx.NewErrParam("query.commodity.hash", "商品哈希必填查询参数")
-	}
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.FullGoods]{}
 	pf := req.GetPage()
@@ -112,7 +109,7 @@ func (i *inventoryImpl) UpdateFull(ctx context.Context, newFull *model.FullGoods
 		logx.Error("get last commodity failed", "hash", oldFull.Hash, "error", err)
 		return err
 	}
-	if oldLast.LastID == "" {
+	if oldLast.ID == "" {
 		return errx.NewErrParam("", "商品不存在")
 	}
 	sig := int32(1)
@@ -126,8 +123,8 @@ func (i *inventoryImpl) UpdateFull(ctx context.Context, newFull *model.FullGoods
 		logx.Error("update full commodity failed", "id", newFull.ID, "error", err)
 		return err
 	}
-	if err := i.repoLast.Update(ctx, store.NewFilter().Eq(field.ID, oldLast.LastID), oldLast); err != nil {
-		logx.Error("update last commodity failed", "id", oldLast.LastID, "error", err)
+	if err := i.repoLast.Update(ctx, store.NewFilter().Eq(field.ID, oldLast.ID), oldLast); err != nil {
+		logx.Error("update last commodity failed", "id", oldLast.ID, "error", err)
 		return err
 	}
 	return nil
@@ -139,12 +136,12 @@ func (i *inventoryImpl) UpdateLast(ctx context.Context, newLast *model.LastCommo
 		return err
 	}
 	oldLast := &model.LastCommodity{}
-	where := store.NewFilter().Eq(field.ID, newLast.LastID)
+	where := store.NewFilter().Eq(field.ID, newLast.ID)
 	if err := i.repoLast.Query(ctx, where, oldLast); err != nil {
-		logx.Error("get last commodity failed", "id", newLast.LastID, "error", err)
+		logx.Error("get last commodity failed", "id", newLast.ID, "error", err)
 		return err
 	}
-	if oldLast.LastID == "" {
+	if oldLast.ID == "" {
 		return errx.NewErrParam("", "商品不存在")
 	}
 	if oldLast.Hash != newLast.Hash {
@@ -158,7 +155,7 @@ func (i *inventoryImpl) UpdateLast(ctx context.Context, newLast *model.LastCommo
 		})
 	}
 	if err := i.repoLast.Update(ctx, where, newLast); err != nil {
-		logx.Error("update last commodity failed", "id", newLast.LastID, "error", err)
+		logx.Error("update last commodity failed", "id", newLast.ID, "error", err)
 		return err
 	}
 	if newLast.Count != oldLast.Count {

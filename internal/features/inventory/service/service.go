@@ -33,7 +33,7 @@ func Provide() {
 	wire.ProvideName(featc.InventoryInventory, func() InventoryInventory {
 		return i
 	})
-	wire.ProvideName(featc.InventoryProduce, func() coService.InventorySaver {
+	wire.ProvideName(featc.InventorySave, func() coService.InventorySaver {
 		return i
 	})
 }

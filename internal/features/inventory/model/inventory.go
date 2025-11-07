@@ -12,12 +12,16 @@ import (
 // QueryLastCommodity 商品查询参数
 type QueryLastCommodity struct {
 	coModel.QueryCommodity `json:"-,inline" where:",,omitempty"`
-	// Desc 备注
-	Desc string `json:"desc" where:"regex,desc,omitempty"`
 	// CreatedAt 范围搜索
-	CreatedAt coModel.RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
+	CreatedAt *coModel.RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
 	// UpdatedAt 范围搜索
-	UpdatedAt coModel.RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+	UpdatedAt *coModel.RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+	// Count 范围搜索
+	Count *coModel.RangeX[int32] `json:"count" where:"range,count,omitempty"`
+	// LeftCount 范围搜索
+	LeftCount *coModel.RangeX[int32] `json:"left_count" where:"range,left_count,omitempty"`
+	// UsedCount 已用数量
+	UsedCount *coModel.RangeX[int32] `json:"used_count" where:"range,used_count,omitempty"`
 }
 
 // Normalize 归一化查询商品参数
@@ -30,8 +34,8 @@ func (q *QueryLastCommodity) Normalize() {
 type LastCommodity struct {
 	// Xid 主键
 	Xid uint32 `json:"xid" xorm:"pk autoincr 'xid'"`
-	// LastID 标识
-	LastID string `json:"last_id" xorm:"char(36) unique not null 'last_id'"`
+	// ID 标识
+	ID string `json:"id" xorm:"char(36) unique not null 'id'"`
 	// CreatedAt 创建时间
 	CreatedAt time.Time `json:"created_at" xorm:"created 'created_at'"`
 	// UpdatedAt 修改时间
@@ -53,7 +57,7 @@ func (*LastCommodity) TableName() string {
 
 // Normalize -
 func (l *LastCommodity) Normalize() {
-	utils.PstrTrims(&l.LastID)
+	utils.PstrTrims(&l.ID)
 	l.Commodity.Normalize()
 }
 
@@ -70,13 +74,24 @@ func ProcessLastCommodity(_ context.Context, l *LastCommodity) error {
 
 // QueryFullGoods 商品查询参数
 type QueryFullGoods struct {
-	coModel.QueryCommodity `json:"-,inline" where:",,omitempty"`
-	// Desc 备注
-	Desc string `json:"desc" where:"regex,desc,omitempty"`
+	// QueryGoods 查询商品
+	coModel.QueryRefGoods `json:",inline" where:",,omitempty"`
+	// QueryBatch 查询批次
+	coModel.QueryRefBatch `json:",inline" where:",,omitempty"`
 	// CreatedAt 范围搜索
-	CreatedAt coModel.RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
+	CreatedAt *coModel.RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
 	// UpdatedAt 范围搜索
-	UpdatedAt coModel.RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+	UpdatedAt *coModel.RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+	// LeftCount 范围搜索
+	LeftCount *coModel.RangeX[int32] `json:"left_count" where:"range,left_count,omitempty"`
+	// UsedCount 已用数量
+	UsedCount *coModel.RangeX[int32] `json:"used_count" where:"range,used_count,omitempty"`
+}
+
+// Normalize -
+func (q *QueryFullGoods) Normalize() {
+	q.QueryRefGoods.Normalize()
+	q.QueryRefBatch.Normalize()
 }
 
 // FullGoods 全量商品
@@ -93,6 +108,7 @@ type FullGoods struct {
 
 func (l *FullGoods) Normalize() {
 	utils.PstrTrims(&l.Storage)
+	l.RefBatch.Normalize()
 	l.RefGoods.Normalize()
 }
 

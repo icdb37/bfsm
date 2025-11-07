@@ -47,6 +47,19 @@ func (c *SimpleCompany) TableName() string {
 	return featc.GetTableName(featc.CompanyCompany)
 }
 
+// QueryRefCompany 查询企业
+type QueryRefCompany struct {
+	// CompanyID 企业ID
+	CompanyID string `json:"company_id,omitempty" where:"eq,company_id,omitempty"`
+	// CompanyName 企业名称
+	CompanyName string `json:"company_name,omitempty" where:"regex,company_name,omitempty"`
+}
+
+// Normalize -
+func (q *QueryRefCompany) Normalize() {
+	utils.PstrTrims(&q.CompanyID, &q.CompanyName)
+}
+
 // RefCompany 引用企业
 type RefCompany struct {
 	CompanyID   string `json:"company_id" xorm:"char(36) 'company_id'"`
