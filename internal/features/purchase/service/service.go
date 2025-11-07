@@ -12,30 +12,35 @@ import (
 	"github.com/icdb37/bfsm/internal/wire"
 )
 
-// PurchaseServer - 采购订单服务接口
-type PurchaseServer interface {
+// BatchServer - 采购订单服务接口
+type BatchServer interface {
 	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchase]) (resp *coModel.SearchResponse[model.SimplePurchase], err error)
 	Create(ctx context.Context, info *model.PurchaseBatch) error
 	Update(ctx context.Context, info *model.PurchaseBatch) error
+	UpdateStatus(ctx context.Context, req *model.UpdateBatchStatus) error
 	Delete(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (*model.PurchaseBatch, error)
 }
 
 // GoodsServer - 商品服务接口
 type GoodsServer interface {
-	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryGoods]) (resp *coModel.SearchResponse[model.PurchaseGoods], err error)
+	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchaseGoods]) (resp *coModel.SearchResponse[model.PurchaseGoods], err error)
 }
 
 func Provide() {
-	wire.ProvideName(featc.CommodityCommodity, func() PurchaseServer {
-		repo, err := store.NewTable(&model.PurchaseBatch{})
+	wire.ProvideName(featc.PurchaseBatch, func() BatchServer {
+		repoBatch, err := store.NewTable(&model.PurchaseBatch{})
 		if err != nil {
 			logx.Fatal("create purchase batch repo failed", "error", err)
 		}
+		repoGoods, err := store.NewTable(&model.PurchaseGoods{})
+		if err != nil {
+			logx.Fatal("create purchase goods repo failed", "error", err)
+		}
 		inventory := wire.ResolveName[coService.InventorySaver](featc.InventorySave)
-		return &purchaseImpl{repo: repo, inventory: inventory}
+		return &batchImpl{repoBatch: repoBatch, repoGoods: repoGoods, inventory: inventory}
 	})
-	wire.ProvideName(featc.CommodityCommodity, func() GoodsServer {
+	wire.ProvideName(featc.PurchaseGoods, func() GoodsServer {
 		repo, err := store.NewTable(&model.PurchaseGoods{})
 		if err != nil {
 			logx.Fatal("create purchase goods repo failed", "error", err)

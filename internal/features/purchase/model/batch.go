@@ -20,6 +20,8 @@ type ExtraExpense struct {
 
 // QueryPurchase 商品查询参数
 type QueryPurchase struct {
+	// ID 采购标识
+	ID string `json:"id" where:"eq,id,omitempty"`
 	// Name 名称
 	Name string `json:"name" where:"regex,name,omitempty"`
 	// Desc 备注
@@ -27,15 +29,25 @@ type QueryPurchase struct {
 	// StatusCode 状态码，精确匹配
 	StatusCode enum.StatusCode `json:"status_code" where:"eq,status_code,omitempty"`
 	// TotalAmount 订单金额，分
-	TotalAmount coModel.RangeX[int32] `json:"total_amount" where:"range,total_amount,omitempty"`
+	TotalAmount *coModel.RangeX[int32] `json:"total_amount" where:"range,total_amount,omitempty"`
 	// CompanyName 公司名称，模糊匹配
 	CompanyName string `json:"company_name" where:"regex,commodities,omitempty"`
 	// CommodityName 商品名称，模糊匹配
 	CommodityName string `json:"commodity_name" where:"regex,commodities,omitempty"`
 	// CreatedAt 范围搜索
-	CreatedAt coModel.RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
+	CreatedAt *coModel.RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
 	// UpdatedAt 范围搜索
-	UpdatedAt coModel.RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+	UpdatedAt *coModel.RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+}
+
+// UpdateBatchStatus 更新采购订单
+type UpdateBatchStatus struct {
+	// ID 采购标识
+	ID string `json:"id" where:"eq,id,omitempty"`
+	// UpdatedAt 更新时间
+	UpdatedAt time.Time `json:"updated_at" xorm:"updated 'updated_at'" cfpx:"updated_at"`
+	// StatusCode 状态码
+	StatusCode enum.StatusCode `json:"status_code" xorm:"int 'status_code'" cfpx:"status_code"`
 }
 
 // SimplePurchase 采购订单
@@ -45,12 +57,12 @@ type SimplePurchase struct {
 	CreatedAt time.Time `json:"created_at" xorm:"created 'created_at'"`
 	// UpdatedAt 更新时间
 	UpdatedAt time.Time `json:"updated_at" xorm:"updated 'updated_at'" cfpx:"updated_at"`
-	// PurchaseID 采购标识
-	PurchaseID string `json:"purchase_id" xorm:"char(36) unique not null 'purchase_id'"`
-	// PurchaseName 采购名称
-	PurchaseName string `json:"purchase_name" xorm:"varchar(200) 'purchase_name'" cfpx:"name"`
-	// PurchaseDesc 采购描述
-	PurchaseDesc string `json:"purchase_desc" xorm:"varchar(500) 'purchase_desc'" cfpx:"desc"`
+	// ID 采购标识
+	ID string `json:"id" xorm:"char(36) unique not null 'id'"`
+	// Name 采购名称
+	Name string `json:"name" xorm:"varchar(200) 'name'" cfpx:"name"`
+	// Desc 采购描述
+	Desc string `json:"desc" xorm:"varchar(500) 'desc'" cfpx:"desc"`
 	// GoodsAmount 商品金额，分
 	GoodsAmount int32 `json:"goods_amount" xorm:"int 'goods_amount'" cfpx:"goods_amount"`
 	// ExtraAmount 额外金额，分
@@ -104,9 +116,9 @@ type PurchaseBatch struct {
 
 func (e *PurchaseBatch) GetBatch() coModel.RefBatch {
 	return coModel.RefBatch{
-		BatchID:    e.PurchaseID,
-		BatchName:  e.PurchaseName,
-		BatchDesc:  e.PurchaseDesc,
+		BatchID:    e.ID,
+		BatchName:  e.Name,
+		BatchDesc:  e.Desc,
 		SourceCode: enum.SourceCodePurchaseProduce,
 	}
 }

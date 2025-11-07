@@ -14,7 +14,7 @@ type goodsImpl struct {
 }
 
 // Search 搜索商品
-func (g *goodsImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryGoods]) (resp *coModel.SearchResponse[model.PurchaseGoods], err error) {
+func (g *goodsImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchaseGoods]) (resp *coModel.SearchResponse[model.PurchaseGoods], err error) {
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.PurchaseGoods]{}
 	pf := req.GetPage()

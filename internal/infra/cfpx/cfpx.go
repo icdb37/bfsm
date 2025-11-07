@@ -139,7 +139,18 @@ func processCheck(pv *reflect.Value, pi *Item) error {
 
 // Process 数据格式化，字段校验
 func Process(param Featurer) error {
-	return pService.Process(param)
+	if err := pService.Process(param); err != nil {
+		return err
+	}
+	if n, ok := any(param).(Normalizer); ok {
+		n.Normalize()
+	}
+	return nil
+}
+
+// Normalizer 数据归一化
+type Normalizer interface {
+	Normalize()
 }
 
 // ProcessCreate 数据格式化，字段校验
