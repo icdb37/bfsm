@@ -10,11 +10,11 @@ import (
 
 // saveInventory 保存库存
 func (p *purchaseImpl) saveInventory(ctx context.Context, info *model.EntirePurchase) error {
-	for _, c := range info.Commodities {
+	for _, c := range info.Companies {
 		bc := &coModel.ProduceBatch{
-			ID:        info.ID,
-			Commodity: c.Commodities,
+			ID: info.PurchaseID,
 		}
+		logx.Info("produce inventory", "commodity", c)
 		if err := p.inventory.Produce(ctx, bc); err != nil {
 			logx.Error("produce inventory failed", "error", err)
 			return err

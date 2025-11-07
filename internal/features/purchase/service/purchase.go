@@ -37,7 +37,7 @@ func (p *purchaseImpl) Get(ctx context.Context, id string) (*model.EntirePurchas
 		logx.Error("get purchase failed", "error", err)
 		return nil, err
 	}
-	if info.ID == "" {
+	if info.PurchaseID == "" {
 		logx.Error("get purchase failed", "error", "purchase not found", "id", id)
 		return nil, errx.NewNexist("采购订单不存在")
 	}
@@ -62,7 +62,7 @@ func (p *purchaseImpl) Update(ctx context.Context, info *model.EntirePurchase) e
 		logx.Error("update purchase failed", "error", err)
 		return err
 	}
-	where := store.NewFilter().Eq(field.ID, info.ID)
+	where := store.NewFilter().Eq(field.ID, info.PurchaseID)
 	if err := p.repo.Update(ctx, where, info); err != nil {
 		logx.Error("update purchase failed", "error", err)
 		return err

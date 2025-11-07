@@ -34,3 +34,6 @@ internal/*/*/*.log
 
 __debug_*
 bfsm/
+bfsm
+bfsm.exe
+bin/

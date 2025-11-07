@@ -106,3 +106,8 @@ type SessionStatement struct {
 	Repo    Tabler
 	Process func(context.Context, Tabler) error
 }
+
+// Aggregator 聚合器
+type Aggregator interface {
+	Aggregate(ctx context.Context, f Filter, v any) error
+}

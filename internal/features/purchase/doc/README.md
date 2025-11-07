@@ -2,6 +2,31 @@
 
 ## 数据结构
 
+* 企业商品表（表名：company_commodity）
+  * id 唯一标识
+  * company_id 企业标识
+  * company_name 企业名称
+  * commodity_id 商品标识
+  * commodity_name 商品名称
+  * commodity_spec 商品规格
+  * commodity_size 商品尺寸
+  * commodity_validity 商品有效期（天）
+  * commodity_price 商品单价（分）
+* 采购表（表名：purchase_batch）
+  * id 采购标识
+  * name 采购名称
+  * desc 采购描述
+  * created_at 采购创建时间
+  * status 采购状态
+  * total_amount 采购总金额（分）
+  * clear_amount 已结算金额（分）
+* 采购商品表（表名：purchase_commodity）
+  * purchase_id 采购标识
+  * company_id 企业标识
+  * commodity_id 商品标识
+  * count 商品数量
+  * price 商品单价（分）
+
 ### 采购订单
 
 ```json
@@ -28,7 +53,7 @@
             "cost": 23400 //额外费用，分
         }
       ],
-      "commodities": [
+      "commodity": [
         {
           "id": 1,
           "name": "商品名称",
@@ -53,6 +78,11 @@
     }
   ]
 }
+```
+
+
+```sql
+
 ```
 
 ## 功能列表

@@ -13,8 +13,10 @@ const (
 	// CompanyCommodity - 企业管理-企业商品
 	CompanyCommodity = "company.commodity"
 
-	// PurchasePurchase - 采购订单管理-采购订单信息
-	PurchasePurchase = "purchase.purchase"
+	// PurchaseBatch - 采购订单管理-采购订单批次信息
+	PurchaseBatch = "purchase.batch"
+	// PurchaseCommodity - 采购订单管理-采购订单商品信息
+	PurchaseCommodity = "purchase.commodity"
 
 	// InventoryInventory - 库存管理-库存信息
 	InventoryInventory = "inventory.inventory"

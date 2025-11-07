@@ -30,3 +30,47 @@ const (
 	// SourceCodeInventoryUpdateProduce 编辑入库
 	SourceCodeInventoryUpdateProduce SourceCode = 3
 )
+
+// AmountStatus 结算状态
+type AmountStatus uint8
+
+const (
+	// AmountStatusUndefined 未定义
+	AmountStatusUndefined AmountStatus = 0
+	// AmountStatusUnpaid 未结算
+	AmountStatusUnpaid AmountStatus = 1
+	// AmountStatusPaying 结算中
+	AmountStatusPaying AmountStatus = 2
+	// AmountStatusPaid 已结算
+	AmountStatusPaid AmountStatus = 3
+)
+
+// AccountDeal 账单交易
+type AccountDeal int8
+
+const (
+	// AccountDealExpense 支出
+	AccountDealExpense AccountDeal = -1
+	// AccountDealUndefined 未定义
+	AccountDealUndefined AccountDeal = 0
+	// AccountDealIncome 收入
+	AccountDealIncome AccountDeal = 1
+)
+
+// AccountStatus 账单状态
+type AccountStatus uint8
+
+const (
+	// AccountStatusUndefined 未定义
+	AccountStatusUndefined AccountStatus = iota
+	// AccountStatusSubmitted 已提交
+	AccountStatusSubmitted
+	// AccountStatusApproved 已审核
+	AccountStatusApproved
+	// AccountStatusCompleted 已完成
+	AccountStatusCompleted
+	// AccountStatusCanceled 已取消
+	AccountStatusCanceled
+	// AccountStatusClosed 已关闭
+	AccountStatusClosed
+)

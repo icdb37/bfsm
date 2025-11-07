@@ -82,10 +82,23 @@ type Commodity struct {
 	Desc     string           `json:"desc" xorm:"varchar(200) 'desc'" cfpx:"desc"`
 	Spec     string           `json:"spec" xorm:"varchar(100) 'spec'" cfpx:"spec"`
 	Size     string           `json:"size" xorm:"varchar(100) 'size'" cfpx:"size"`
+	Attrs    []*CommodityAttr `json:"attrs" xorm:"json 'attrs'"`
 	Validity int32            `json:"validity" xorm:"tinyint 'validity'" cfpx:"validity"`
 	Price    int32            `json:"price" xorm:"int 'price'" cfpx:"price"`
-	Count    int32            `json:"count" xorm:"count 'count'" cfpx:"count"`
-	Attrs    []*CommodityAttr `json:"attrs" xorm:"json 'attrs'"`
+}
+
+// Goods 货物
+type Goods struct {
+	// Commodity 商品信息
+	Commodity `json:",inline" xorm:"extends" cfpx:"commodity"`
+	// Count 数量
+	Count int32 `json:"count" xorm:"int 'count'" cfpx:"count"`
+	// Amount 商品金额，分
+	Amount int32 `json:"amount" xorm:"int 'amount'" cfpx:"amount"`
+	// ProducedAt 生产时间
+	ProducedAt time.Time `json:"produced_at" xorm:"datetime 'produced_at'" cfpx:"produced_at"`
+	// ExpiredAt 过期时间
+	ExpiredAt time.Time `json:"expired_at" xorm:"datetime 'expired_at'" cfpx:"expired_at"`
 }
 
 // CloneRef 克隆商品引用
@@ -98,7 +111,6 @@ func (c *Commodity) CloneRef() RefCommodity {
 		CommoditySize:     c.Size,
 		CommodityValidity: c.Validity,
 		CommodityPrice:    c.Price,
-		CommodityCount:    c.Count,
 		CommodityAttrs:    c.Attrs,
 	}
 }
