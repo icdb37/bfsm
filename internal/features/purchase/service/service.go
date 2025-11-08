@@ -17,7 +17,7 @@ type BatchServer interface {
 	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchase]) (resp *coModel.SearchResponse[model.SimplePurchase], err error)
 	Create(ctx context.Context, info *model.PurchaseBatch) error
 	Update(ctx context.Context, info *model.PurchaseBatch) error
-	UpdateStatus(ctx context.Context, req *model.UpdateBatchStatus) error
+	UpdateStatus(ctx context.Context, req *coModel.UpdateStatus) error
 	Delete(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (*model.PurchaseBatch, error)
 }
@@ -38,7 +38,8 @@ func Provide() {
 			logx.Fatal("create purchase goods repo failed", "error", err)
 		}
 		inventory := wire.ResolveName[coService.InventorySaver](featc.InventorySave)
-		return &batchImpl{repoBatch: repoBatch, repoGoods: repoGoods, inventory: inventory}
+		bill := wire.ResolveName[coService.BillSaver](featc.BillBatch)
+		return &batchImpl{repoBatch: repoBatch, repoGoods: repoGoods, inventory: inventory, bill: bill}
 	})
 	wire.ProvideName(featc.PurchaseGoods, func() GoodsServer {
 		repo, err := store.NewTable(&model.PurchaseGoods{})

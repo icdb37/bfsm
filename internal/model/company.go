@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/icdb37/bfsm/internal/constx"
 	"github.com/icdb37/bfsm/internal/constx/featc"
 	"github.com/icdb37/bfsm/internal/utils"
 )
@@ -69,4 +70,10 @@ type RefCompany struct {
 // Normalize -
 func (r *RefCompany) Normalize() {
 	utils.PstrTrims(&r.CompanyID, &r.CompanyName)
+}
+
+// ExtraCompany 特殊企业
+var ExtraCompany = RefCompany{
+	CompanyID:   constx.ExtraCompanyID,
+	CompanyName: constx.ExtraCompanyName,
 }

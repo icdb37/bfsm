@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/icdb37/bfsm/internal/constx/enum"
 	"github.com/icdb37/bfsm/internal/utils"
 )
 
@@ -61,4 +62,14 @@ type Tag struct {
 
 func (t *Tag) Normalize() {
 	utils.PstrTrims(&t.Category, &t.Value, &t.Color, &t.Shape)
+}
+
+// UpdateStatus 更新采购订单
+type UpdateStatus struct {
+	// ID 采购标识
+	ID string `json:"id" where:"eq,id,omitempty"`
+	// UpdatedAt 更新时间
+	UpdatedAt time.Time `json:"updated_at" xorm:"updated 'updated_at'" cfpx:"updated_at"`
+	// Status 状态数值
+	Status enum.StatusCode `json:"status" xorm:"int 'status'" cfpx:"status"`
 }

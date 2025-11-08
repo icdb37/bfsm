@@ -118,6 +118,7 @@ func (r *RefGoods) Normalize() {
 
 // BatchGoods 批次商品
 type BatchGoods struct {
+	// Datas 商品列表
 	Datas []*RefGoods `json:"datas" xorm:"json 'datas'"`
 	// RefBatch 批次信息
 	RefBatch `json:",inline" xorm:"extends"`

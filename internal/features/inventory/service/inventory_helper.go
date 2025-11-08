@@ -120,12 +120,12 @@ func (i *inventoryImpl) saveConsumeStatement(ctx context.Context, info *coModel.
 		}
 		if p == nil {
 			logx.Error("get consume commodity failed", "ref_goods_id", c.ID, "error", err)
-			return nil, errx.NewErrParam("", "引用商品【%s】不存在", c.ID)
+			return nil, errx.NewParam("", "引用商品【%s】不存在", c.ID)
 		}
 		p.UsedCount += c.Count
 		if p.UsedCount > p.Count {
 			logx.Error("consume commodity count not enough", "left_count", p.LeftCount, "consume_count", c.Count, "ref_goods_id", c.ID, "error", err)
-			return nil, errx.NewErrParam("", "引用商品【%s】库存不足，批次【%s】库存剩余 %d", p.Name, p.BatchDesc, p.LeftCount)
+			return nil, errx.NewParam("", "引用商品【%s】库存不足，批次【%s】库存剩余 %d", p.Name, p.BatchDesc, p.LeftCount)
 		}
 		c.Hash = p.Hash
 		hashs = append(hashs, p.Hash)
@@ -141,7 +141,7 @@ func (i *inventoryImpl) saveConsumeStatement(ctx context.Context, info *coModel.
 				l.UsedCount += c.Count
 				if l.Count < l.UsedCount {
 					logx.Error("last commodity count not enough", "last_commodity", l, "error", err)
-					return nil, errx.NewErrParam("", "商品【%s】库存不足", l.Name)
+					return nil, errx.NewParam("", "商品【%s】库存不足", l.Name)
 				}
 				break
 			}

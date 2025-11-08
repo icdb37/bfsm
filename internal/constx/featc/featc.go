@@ -27,6 +27,11 @@ const (
 	// InventorySave - 库存管理-库存信息
 	InventorySave = "inventory.save"
 
+	// BillBatch - 账单管理-账单批次信息
+	BillBatch = "bill.batch"
+	// BillDeal - 账单管理-账单交易详情
+	BillDeal = "bill.deal"
+
 	// User - 用户模块
 	User = "user"
 )

@@ -99,10 +99,10 @@ func (i *inventoryImpl) UpdateFull(ctx context.Context, newFull *model.FullGoods
 		return err
 	}
 	if oldFull.ID == "" {
-		return errx.NewErrParam("", "商品不存在")
+		return errx.NewParam("", "商品不存在")
 	}
 	if oldFull.Hash != newFull.Hash {
-		return errx.NewErrParam("", "不支持修改商品名称、商品规格、商品尺寸")
+		return errx.NewParam("", "不支持修改商品名称、商品规格、商品尺寸")
 	}
 	oldLast := &model.LastCommodity{}
 	if err := i.repoLast.Query(ctx, store.NewFilter().Eq(field.CommodityHash, oldFull.Hash), oldLast); err != nil {
@@ -110,7 +110,7 @@ func (i *inventoryImpl) UpdateFull(ctx context.Context, newFull *model.FullGoods
 		return err
 	}
 	if oldLast.ID == "" {
-		return errx.NewErrParam("", "商品不存在")
+		return errx.NewParam("", "商品不存在")
 	}
 	sig := int32(1)
 	if oldFull.SourceCode < 0 {
@@ -142,7 +142,7 @@ func (i *inventoryImpl) UpdateLast(ctx context.Context, newLast *model.LastCommo
 		return err
 	}
 	if oldLast.ID == "" {
-		return errx.NewErrParam("", "商品不存在")
+		return errx.NewParam("", "商品不存在")
 	}
 	if oldLast.Hash != newLast.Hash {
 		where = store.NewFilter().Eq(field.Hash, oldLast.Hash)

@@ -35,16 +35,16 @@ const (
 	AmountStatusPaid AmountStatus = 3
 )
 
-// AccountDeal 账单交易
-type AccountDeal int8
+// DealCategory 账单交易
+type DealCategory int8
 
 const (
-	// AccountDealExpense 支出
-	AccountDealExpense AccountDeal = -1
-	// AccountDealUndefined 未定义
-	AccountDealUndefined AccountDeal = 0
-	// AccountDealIncome 收入
-	AccountDealIncome AccountDeal = 1
+	// DealCategoryExpense 支出
+	DealCategoryExpense DealCategory = -1
+	// DealCategoryUndefined 未定义
+	DealCategoryUndefined DealCategory = 0
+	// DealCategoryIncome 收入
+	DealCategoryIncome DealCategory = 1
 )
 
 // StatusCode 账单状态

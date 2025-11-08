@@ -15,8 +15,8 @@ func (e *ErrStore) Error() string {
 	return e.Message
 }
 
-// Store 存储业务异常
-func Store(format string, args ...any) *ErrStore {
+// NewStore 存储业务异常
+func NewStore(format string, args ...any) *ErrStore {
 	return &ErrStore{
 		Message: fmt.Sprintf(format, args...),
 	}
@@ -68,8 +68,8 @@ func (e *ErrStatus) Error() string {
 	return e.Message
 }
 
-// NewErrStatus 创建状态异常
-func NewErrStatus(format string, args ...any) *ErrStatus {
+// NewStatus 创建状态异常
+func NewStatus(format string, args ...any) *ErrStatus {
 	return &ErrStatus{
 		Message: fmt.Sprintf(format, args...),
 	}
@@ -85,7 +85,7 @@ func (e *ErrParam) Error() string {
 	return e.Message
 }
 
-func NewErrParam(field string, format string, args ...any) *ErrParam {
+func NewParam(field string, format string, args ...any) *ErrParam {
 	return &ErrParam{
 		Field:   field,
 		Message: fmt.Sprintf(format, args...),

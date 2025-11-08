@@ -81,7 +81,7 @@ func (h *batchHandler) delete(c echo.Context) error {
 }
 
 func (h *batchHandler) updateStatus(c echo.Context) error {
-	req := &model.UpdateBatchStatus{}
+	req := &coModel.UpdateStatus{}
 	ctx := c.Request().Context()
 	if err := c.Bind(req); err != nil {
 		logx.Error("update purchase batch status bind failed", "error", err)
