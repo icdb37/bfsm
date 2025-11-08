@@ -24,7 +24,7 @@ func registBatch(e *echo.Echo, s service.BatchServer) {
 		g.GET("/:id", u.get)
 		g.POST("", u.create)
 		g.PUT("/:id", u.update)
-		g.PATCH("/:id/:status", u.updateStatus)
+		g.PATCH("/:id/status", u.updateStatus)
 		g.PATCH("/:id/amount", u.updateAmount)
 	}
 }

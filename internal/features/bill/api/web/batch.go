@@ -1,8 +1,8 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 
@@ -74,30 +74,30 @@ func (h *batchHandler) update(c echo.Context) error {
 }
 
 func (h *batchHandler) updateStatus(c echo.Context) error {
-	id := c.Param(field.ID)
-	strStatus := c.Param(field.Status)
-	status, err := strconv.Atoi(strStatus)
-	if err != nil {
-		logx.Error("update bill batch status parse failed", "status", strStatus, "error", err)
-		return c.JSON(http.StatusBadRequest, errx.NewParam(field.Status, strStatus))
+	info := &coModel.UpdateStatus{}
+	if err := c.Bind(info); err != nil {
+		logx.Error("update bill batch status bind failed", "error", err)
+		return c.JSON(http.StatusBadRequest, err)
 	}
+	var err error
 	ctx := c.Request().Context()
-	switch enum.StatusCode(status) {
+	info.ID = c.Param(field.ID)
+	switch info.Status {
 	case enum.StatusCodeApproved:
-		err = h.s.Approve(ctx, id)
+		err = h.s.Approve(ctx, info)
 	case enum.StatusCodeCompleted:
-		err = h.s.Complete(ctx, id)
+		err = h.s.Complete(ctx, info)
 	case enum.StatusCodeCanceled:
-		err = h.s.Cancel(ctx, id)
+		err = h.s.Cancel(ctx, info)
 	case enum.StatusCodeClosed:
-		err = h.s.Close(ctx, id)
+		err = h.s.Close(ctx, info)
 	default:
-		err = errx.NewParam(field.Status, strStatus)
+		err = errx.NewParam(field.Status, fmt.Sprint(info.Status))
 	}
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, coModel.NewIDResponse(id))
+	return c.JSON(http.StatusOK, coModel.NewIDResponse(info.ID))
 }
 
 func (h *batchHandler) updateAmount(c echo.Context) error {
