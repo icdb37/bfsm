@@ -19,7 +19,7 @@ type RefDeal struct {
 	// AmountDesc 结算描述
 	AmountDesc string `json:"amount_desc" xorm:"varchar(200) 'amount_desc'" cfpx:"desc"`
 	// RefCompany 企业基本信息
-	RefCompany `json:"ref_company" xorm:"extends"`
+	RefCompany `json:",inline" xorm:"extends"`
 }
 
 // Normalize -
@@ -41,6 +41,8 @@ func (r *RefDeal) Normalize() {
 type BatchDeal struct {
 	// Category 交易类型：支出/收入
 	Category enum.DealCategory `json:"category" xorm:"tinyint 'category'"`
+	// Business 业务类型
+	Business string `json:"business" xorm:"varchar(100) 'business'"`
 	// RefBatch 批次信息
 	RefBatch `json:",inline" xorm:"extends"`
 	// Datas 商品列表

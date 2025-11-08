@@ -64,12 +64,36 @@ func (t *Tag) Normalize() {
 	utils.PstrTrims(&t.Category, &t.Value, &t.Color, &t.Shape)
 }
 
-// UpdateStatus 更新采购订单
+// UpdateStatus 更新状态
 type UpdateStatus struct {
-	// ID 采购标识
-	ID string `json:"id" where:"eq,id,omitempty"`
+	// ID 标识
+	ID string `json:"id" xorm:"varchar(36) 'id'"`
+	// Desc 描述
+	Desc string `json:"desc" xorm:"varchar(200) 'desc'" cfpx:"desc"`
 	// UpdatedAt 更新时间
 	UpdatedAt time.Time `json:"updated_at" xorm:"updated 'updated_at'" cfpx:"updated_at"`
 	// Status 状态数值
 	Status enum.StatusCode `json:"status" xorm:"int 'status'" cfpx:"status"`
+}
+
+// UpdateAmount 更新金额
+type UpdateAmount struct {
+	// ID 标识
+	ID string `json:"id" xorm:"varchar(36) 'id'"`
+	// Desc 描述
+	Desc string `json:"desc" xorm:"varchar(200) 'desc'" cfpx:"desc"`
+	// UpdatedAt 更新时间
+	UpdatedAt time.Time `json:"updated_at" xorm:"updated 'updated_at'" cfpx:"updated_at"`
+	// ClearedAt 已结算时间
+	ClearedAt time.Time `json:"cleared_at" xorm:"date 'cleared_at'"`
+	// AmountStatus 结算状态
+	AmountStatus enum.AmountStatus `json:"amount_status" xorm:"tinyint 'amount_status'"`
+	// AmountTotal 交易金额
+	AmountTotal int32 `json:"amount_total" xorm:"int 'amount_total'"`
+	// AmountClear 已结算金额
+	AmountClear int32 `json:"amount_clear" xorm:"int 'amount_clear'"`
+	// AmountLeft 未结算金额
+	AmountLeft int32 `json:"amount_left" xorm:"int 'amount_left'"`
+	// AmountDesc 结算描述
+	AmountDesc string `json:"amount_desc" xorm:"varchar(200) 'amount_desc'" cfpx:"desc"`
 }

@@ -27,6 +27,8 @@ const (
 	// InventorySave - 库存管理-库存信息
 	InventorySave = "inventory.save"
 
+	// BillSave - 账单管理-账单保存
+	BillSave = "bill.save"
 	// BillBatch - 账单管理-账单批次信息
 	BillBatch = "bill.batch"
 	// BillDeal - 账单管理-账单交易详情

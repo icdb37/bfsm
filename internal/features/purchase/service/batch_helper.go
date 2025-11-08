@@ -92,6 +92,7 @@ func (b *batchImpl) saveInventory(ctx context.Context, info *model.PurchaseBatch
 // saveBill 保存账单
 func (b *batchImpl) saveBill(ctx context.Context, info *model.PurchaseBatch) error {
 	bd := &coModel.BatchDeal{
+		Business: "采购",
 		Category: enum.DealCategoryExpense,
 		RefBatch: info.GetBatch(),
 	}

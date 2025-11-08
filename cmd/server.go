@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 
+	webBill "github.com/icdb37/bfsm/internal/features/bill/api/web"
 	webCommodity "github.com/icdb37/bfsm/internal/features/commodity/api/web"
 	webCompany "github.com/icdb37/bfsm/internal/features/company/api/web"
 	webInventory "github.com/icdb37/bfsm/internal/features/inventory/api/web"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	svcBill "github.com/icdb37/bfsm/internal/features/bill/service"
 	svcCommodity "github.com/icdb37/bfsm/internal/features/commodity/service"
 	svcCompany "github.com/icdb37/bfsm/internal/features/company/service"
 	svcInventory "github.com/icdb37/bfsm/internal/features/inventory/service"
@@ -53,6 +55,7 @@ func initInfra() {
 func provideService() {
 	echox.Provide()
 	svcInventory.Provide()
+	svcBill.Provide()
 	svcCompany.Provide()
 	svcUser.Provide()
 	svcCommodity.Provide()
@@ -64,4 +67,5 @@ func wireWeb() {
 	webUser.Wire()
 	webCommodity.Wire()
 	webPurchase.Wire()
+	webBill.Wire()
 }

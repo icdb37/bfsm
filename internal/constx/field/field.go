@@ -13,6 +13,10 @@ const (
 	Hash = "hash"
 	// GoodsID 商品标识
 	GoodsID = "goods_id"
+	// BatchID 批次标识
+	BatchID = "batch_id"
+	// Status 状态
+	Status = "status"
 )
 
 const (

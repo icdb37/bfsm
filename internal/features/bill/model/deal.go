@@ -8,6 +8,11 @@ import (
 	coModel "github.com/icdb37/bfsm/internal/model"
 )
 
+type QueryBillDeal struct {
+	// RefBatch 批次基本信息
+	coModel.QueryRefBatch `json:",inline" where:",,omitempty"`
+}
+
 // BillDeal 账单交易详情
 type BillDeal struct {
 	// Xid 主键

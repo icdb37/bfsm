@@ -38,7 +38,7 @@ func Provide() {
 			logx.Fatal("create purchase goods repo failed", "error", err)
 		}
 		inventory := wire.ResolveName[coService.InventorySaver](featc.InventorySave)
-		bill := wire.ResolveName[coService.BillSaver](featc.BillBatch)
+		bill := wire.ResolveName[coService.BillSaver](featc.BillSave)
 		return &batchImpl{repoBatch: repoBatch, repoGoods: repoGoods, inventory: inventory, bill: bill}
 	})
 	wire.ProvideName(featc.PurchaseGoods, func() GoodsServer {

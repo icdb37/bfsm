@@ -9,14 +9,48 @@ import (
 	coModel "github.com/icdb37/bfsm/internal/model"
 )
 
-// BillBatch 账单
-type BillBatch struct {
+// QueryBillBatch 账单批次查询条件
+type QueryBillBatch struct {
+	// ID 采购标识
+	ID string `json:"id" where:"eq,id,omitempty"`
+	// Name 名称
+	Name string `json:"name" where:"regex,name,omitempty"`
+	// Desc 备注
+	Desc string `json:"desc" where:"regex,desc,omitempty"`
+	// Status 状态码，精确匹配
+	Status enum.StatusCode `json:"status" where:"eq,status,omitempty"`
+	// Business 业务类型
+	Business string `json:"business" where:"regex,business,omitempty"`
+	// Category 交易类型：支出/收入
+	Category enum.DealCategory `json:"category" where:"eq,category,omitempty"`
+	// AmountStatus 结算状态
+	AmountStatus enum.AmountStatus `json:"amount_status" where:"eq,amount_status,omitempty"`
+	// AmountTotal 订单金额，分
+	AmountTotal *coModel.RangeX[int32] `json:"amount_total" where:"range,amount_total,omitempty"`
+	// AmountLeft 订单金额，分
+	AmountLeft *coModel.RangeX[int32] `json:"amount_left" where:"range,amount_left,omitempty"`
+	// AmountClear 已结算金额，分
+	AmountClear *coModel.RangeX[int32] `json:"amount_clear" where:"range,amount_clear,omitempty"`
+	// CreatedAt 范围搜索
+	CreatedAt *coModel.RangeX[time.Time] `json:"created_at" where:"range,created_at,omitempty"`
+	// UpdatedAt 范围搜索
+	UpdatedAt *coModel.RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
+	// ClearedAt 范围搜索
+	ClearedAt *coModel.RangeX[time.Time] `json:"cleared_at" where:"range,cleared_at,omitempty"`
+	// RefBatch 批次基本信息
+	coModel.QueryRefBatch `json:",inline" where:",,omitempty"`
+}
+
+// SimpleBillBatch 账单批次基本信息
+type SimpleBillBatch struct {
 	// Xid 主键
 	Xid uint32 `json:"xid" xorm:"pk autoincr 'xid'"`
 	// ID 账单批次ID
 	ID string `json:"id" xorm:"varchar(36) 'id'" cfpx:"id"`
 	// Desc 账单描述
 	Desc string `json:"desc" xorm:"varchar(200) 'desc'" cfpx:"desc"`
+	// Business 业务类型
+	Business string `json:"business" xorm:"varchar(100) 'business'"`
 	// Status 状态
 	Status enum.StatusCode `json:"status" xorm:"tinyint 'status'"`
 	// CreatedAt 创建时间
@@ -39,6 +73,12 @@ type BillBatch struct {
 	AmountDesc string `json:"amount_desc" xorm:"varchar(200) 'amount_desc'" cfpx:"desc"`
 	// RefBatch 批次基本信息
 	coModel.RefBatch `json:",inline" xorm:"extends"`
+}
+
+// BillBatch 账单
+type BillBatch struct {
+	// SimpleBillBatch 账单批次基本信息
+	SimpleBillBatch `json:",inline" xorm:"extends"`
 	// Datas 交易详情
 	Datas []*coModel.RefDeal `json:"datas" xorm:"json 'datas'"`
 }

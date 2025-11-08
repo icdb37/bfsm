@@ -28,8 +28,8 @@ type QueryPurchase struct {
 	Desc string `json:"desc" where:"regex,desc,omitempty"`
 	// Status 状态码，精确匹配
 	Status enum.StatusCode `json:"status" where:"eq,status,omitempty"`
-	// TotalAmount 订单金额，分
-	TotalAmount *coModel.RangeX[int32] `json:"total_amount" where:"range,total_amount,omitempty"`
+	// AmountTotal 订单金额，分
+	AmountTotal *coModel.RangeX[int32] `json:"total_amount" where:"range,total_amount,omitempty"`
 	// CompanyName 公司名称，模糊匹配
 	CompanyName string `json:"company_name" where:"regex,commodities,omitempty"`
 	// CommodityName 商品名称，模糊匹配
