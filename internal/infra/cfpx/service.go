@@ -120,7 +120,9 @@ func (s *service) process(pv *reflect.Value, parentItem *Item) error {
 			iv := pv.Field(i)
 			f := pv.Type().Field(i)
 			if f.Anonymous {
-				continue
+				if err := s.process(&iv, parentItem); err != nil {
+					return err
+				}
 			}
 			// 检查是否有 cfpx 标签
 			tag := f.Tag.Get("cfpx")
@@ -129,14 +131,14 @@ func (s *service) process(pv *reflect.Value, parentItem *Item) error {
 			}
 			tag = strings.TrimSpace(tag)
 			pn := parseTagElem(tag)
-			subxItem, ok := parentItem.Item[pn.Code]
+			subItem, ok := parentItem.Item[pn.Code]
 			if !ok { //从默认校验匹配
-				subxItem = s.itemDefault.Item[pn.Code]
+				subItem = s.itemDefault.Item[pn.Code]
 			}
-			if subxItem == nil {
-				subxItem = pn
+			if subItem == nil {
+				subItem = pn
 			}
-			if err := s.process(&iv, subxItem); err != nil {
+			if err := s.process(&iv, subItem); err != nil {
 				return err
 			}
 		}

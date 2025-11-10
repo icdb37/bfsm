@@ -36,37 +36,104 @@ _default_:
             - kind: check
               op: "regex"
               val: "XjFbMy05XVxkezl9JA=="
-user:
-  code: "user"
-  desc: "用户"
+commodity:
+  code: "commodity"
+  desc: "商品管理"
   item:
-    name:
-      code: "name"
-      desc: "用户名称"
-      process:
-        - kind: fmtfn
-          op: "trimr"
-          val: ""
-        - kind: check
-          op: "range"
-          val: "2,20"
-    desc:
-      code: "desc"
-      desc: "描述"
-      process:
-        - kind: fmtfn
-          op: "trim"
-          val: ""
-        - kind: check
-          op: "lt"
-          val: "200"
-    age:
-      code: "age"
-      desc: "用户年龄"
-      process:
-        - kind: check
-          op: "lt"
-          val: "100"
+    commodity:
+      code: "commodity"
+      desc: "商品信息"
+      item:
+        name:
+          code: "name"
+          desc: "商品名称"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "range"
+              val: "2,20"
+        desc:
+          code: "desc"
+          desc: "描述"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "lt"
+              val: "200"
+        spec:
+          code: "spec"
+          desc: "商品规格"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "range"
+              val: "1,100"
+        size:
+          code: "size"
+          desc: "商品尺寸"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "range"
+              val: "1,100"
+        updated_at:
+          code: "updated_at"
+          desc: "更新时间"
+          process:
+            - kind: fmtfn
+              op: "nowdt"
+        price:
+          code: "price"
+          desc: "商品价格"
+          process:
+            - kind: check
+              op: "gt"
+              val: "0"
+        validity:
+          code: "validity"
+          desc: "商品有效期"
+          process:
+            - kind: check
+              op: "gte"
+              val: "0"
+    template:
+      code: "template"
+      desc: "商品模板"
+      item:
+        name:
+          code: "name"
+          desc: "模板名称"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "range"
+              val: "2,20"
+        desc:
+          code: "desc"
+          desc: "模板描述"
+          process:
+            - kind: fmtfn
+              op: "trim"
+              val: ""
+            - kind: check
+              op: "lt"
+              val: "200"
+        updated_at:
+          code: "updated_at"
+          desc: "更新时间"
+          process:
+            - kind: fmtfn
+              op: "nowdt"
 company:
   code: "company"
   desc: "企业管理"
