@@ -24,10 +24,10 @@ type BatchServer interface {
 	Update(ctx context.Context, newInfo *model.BillBatch) error
 	SyncAmount(ctx context.Context, id string) error
 	UpdateAmount(ctx context.Context, info *coModel.UpdateAmount) error
-	Approve(ctx context.Context, id string) error
-	Complete(ctx context.Context, id string) error
-	Cancel(ctx context.Context, id string) error
-	Close(ctx context.Context, id string) error
+	Approve(ctx context.Context, param *coModel.UpdateStatus) error
+	Complete(ctx context.Context, param *coModel.UpdateStatus) error
+	Cancel(ctx context.Context, param *coModel.UpdateStatus) error
+	Close(ctx context.Context, param *coModel.UpdateStatus) error
 }
 
 func Provide() {

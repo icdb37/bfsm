@@ -146,9 +146,8 @@ func (b *batchImpl) SyncAmount(ctx context.Context, id string) error {
 }
 
 // Approve - 审核通过，交易账单细化
-func (b *batchImpl) Approve(ctx context.Context, id string) error {
-	logx.Info("approve bill batch", "id", id)
-	param := &coModel.UpdateStatus{ID: id}
+func (b *batchImpl) Approve(ctx context.Context, param *coModel.UpdateStatus) error {
+	logx.Info("approve bill batch", "id", param.ID)
 	info := &model.BillBatch{}
 	if err := b.repoBatch.Query(ctx, store.NewFilter().Eq(field.ID, param.ID), info); err != nil {
 		logx.Error("query bill batch failed", "id", param.ID, "error", err)
@@ -190,9 +189,8 @@ func (b *batchImpl) Approve(ctx context.Context, id string) error {
 }
 
 // Complete - 完成，交易账单细化
-func (b *batchImpl) Complete(ctx context.Context, id string) error {
-	logx.Info("complete bill batch", "id", id)
-	param := &coModel.UpdateStatus{ID: id}
+func (b *batchImpl) Complete(ctx context.Context, param *coModel.UpdateStatus) error {
+	logx.Info("complete bill batch", "id", param.ID)
 	if err := b.repoBatch.Query(ctx, store.NewFilter().Eq(field.ID, param.ID), param); err != nil {
 		logx.Error("query bill batch failed", "id", param.ID, "error", err)
 		return err
@@ -213,9 +211,8 @@ func (b *batchImpl) Complete(ctx context.Context, id string) error {
 }
 
 // Cancel - 取消，交易账单细化
-func (b *batchImpl) Cancel(ctx context.Context, id string) error {
-	logx.Info("cancel bill batch", "id", id)
-	param := &coModel.UpdateStatus{ID: id}
+func (b *batchImpl) Cancel(ctx context.Context, param *coModel.UpdateStatus) error {
+	logx.Info("cancel bill batch", "id", param.ID)
 	if err := b.repoBatch.Query(ctx, store.NewFilter().Eq(field.ID, param.ID), param); err != nil {
 		logx.Error("query bill batch failed", "id", param.ID, "error", err)
 		return err
@@ -236,9 +233,8 @@ func (b *batchImpl) Cancel(ctx context.Context, id string) error {
 }
 
 // Close - 关闭，交易账单细化
-func (b *batchImpl) Close(ctx context.Context, id string) error {
-	logx.Info("close bill batch", "id", id)
-	param := &coModel.UpdateStatus{ID: id}
+func (b *batchImpl) Close(ctx context.Context, param *coModel.UpdateStatus) error {
+	logx.Info("close bill batch", "id", param.ID)
 	if err := b.repoBatch.Query(ctx, store.NewFilter().Eq(field.ID, param.ID), param); err != nil {
 		logx.Error("query bill batch failed", "id", param.ID, "error", err)
 		return err
