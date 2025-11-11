@@ -63,7 +63,7 @@ func (c *commodityImpl) Update(ctx context.Context, info *model.EntireCommodity)
 		logx.Error("update commodity failed", "error", err)
 		return err
 	}
-	where := store.NewFilter().Eq(field.Hash, info.Hash)
+	where := store.NewFilter().Eq(field.ID, info.ID)
 	if err := c.repo.Update(ctx, where, info); err != nil {
 		logx.Error("update commodity failed", "error", err)
 		return err

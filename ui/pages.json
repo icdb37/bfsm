@@ -12,6 +12,24 @@
 				"navigationBarTitleText": "商品管理"
 			}
 		},
+    {
+    	"path": "pages/commodity/commodity/create",
+    	"style": {
+    		"navigationBarTitleText": "商品创建"
+    	}
+    },
+    {
+    	"path": "pages/commodity/commodity/update",
+    	"style": {
+    		"navigationBarTitleText": "商品修改"
+    	}
+    },
+    {
+    	"path": "pages/commodity/commodity/detail",
+    	"style": {
+    		"navigationBarTitleText": "商品详情"
+    	}
+    },
 		{
 			"path": "pages/commodity/template",
 			"style": {

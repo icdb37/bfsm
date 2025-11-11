@@ -9,8 +9,8 @@
       <scroll-view class="scroll-view_H" scroll-x="true" scroll-left="100">
         	<uni-table border stripe emptyText="暂无更多数据">
         		<uni-tr border stripe >
-        			<uni-th v-for="(item, index) in fields" :align="item.align" :key="index">{{item.name}}</uni-th>
-        			<uni-th width="240" align="center">操作</uni-th>
+        			<uni-th class="table-head" v-for="(item, index) in fields" :align="item.align" :key="index">{{item.name}}</uni-th>
+        			<uni-th class="table-head" width="240" align="center">操作</uni-th>
         		</uni-tr>
         		<!-- 表格数据行 -->
         		<uni-tr v-for="(item, index) in searchResponse.data" :key="index">
@@ -21,43 +21,87 @@
         			<uni-td align="center">{{item.price}}</uni-td>
         			<uni-td>
         				<view class="uni-group">
+                  <button class="uni-button" size="mini" type="default" @click="onDetail(item)">详情</button>
         					<button class="uni-button" size="mini" type="primary" @click="onUpdate(item)">修改</button>
-        					<button class="uni-button" size="mini" type="warn" @click="onDelete(item)">删除</button>
-        					<button class="uni-button" size="mini" type="default" @click="onDetail(item)">详情</button>
+        					<button class="uni-button" size="mini" type="warn" @click="onTipDelete(item)">删除</button>
         				</view>
         			</uni-td>
         		</uni-tr>
         	</uni-table>
+    
+          <uni-popup ref="delpopup" type="dialog">
+          	<uni-popup-dialog title="删除商品" :content="delItem.name" :duration="2000" :before-close="true" @close="onDeleteCancel" @confirm="onDeleteConfirm"></uni-popup-dialog>
+          </uni-popup>
       </scroll-view>
       <view class="page-container">
         <uni-pagination class="page-container-total" show-icon :page-size="searchRequest.size" :current="searchRequest.index+1" :total="searchResponse.total" @change="onChangePage" />
         <uni-data-select class="page-container-page" :clear="false" v-model="searchRequest.size" :localdata="pageList" @change="onChangePage({'current': 1})" />
       </view>
     </view>
-
 	</view>
 </template>
 
 <script lang="ts" setup>
 import {ref} from 'vue';
-import {onLoad} from '@dcloudio/uni-app';
+import {onLoad,onUnload} from '@dcloudio/uni-app';
 import {BaseURL} from '../../xapi/xapi';
 
 
 const searchValue = ref('');
+const delpopup = ref(null);
+const delItem = ref({
+  id: '',
+  name: '',
+});
 
-function onCraete(item:any){
-	console.log("onCraete", item)
+function onCraete(){
+  uni.navigateTo({
+    url: '/pages/commodity/commodity/create',
+    success: (res) => {
+      console.log("success", res)
+    }
+  })
 }
 
 function onUpdate(item:any){
 	console.log("onUpdate", item)
+  uni.navigateTo({
+    url: `/pages/commodity/commodity/update?id=${item.id}`,
+    success: (res) => {
+      console.log("success", res)
+    }
+  })
 }
-function onDelete(item:any){
-	console.log("onDelete", item)
+function onTipDelete(e:any) {
+  console.log("onTipDelete", e)
+  delItem.value.id = e.id
+  delItem.value.name = e.name
+  delpopup.value.open()
+}
+function onDeleteConfirm(){
+	console.log("onDeleteConfirm", delItem.value.id,delItem.value.name)
+  uni.request({
+    url: BaseURL + "/api/v1/commodity/commodity/" + delItem.value.id,
+    method: 'DELETE',
+    success: (res) => {
+      console.log("success", res)
+      onSearch()
+    },
+  })
+  delpopup.value.close()
+}
+function onDeleteCancel(){
+  console.log("onDeleteCancel", delItem)
+  delpopup.value.close()
 }
 function onDetail(item:any){
 	console.log("onDetail", item)
+  uni.navigateTo({
+    url: `/pages/commodity/commodity/detail?id=${item.id}`,
+    success: (res) => {
+      console.log("success", res)
+    }
+  })
 }
 function onChangePage(e:any) {
   console.log("onChangePage", e)
@@ -65,8 +109,12 @@ function onChangePage(e:any) {
 	onSearch({"value": searchValue.value})
 }
 
-function onSearch(e:any) {
+function onSearch() {
 	console.log("onSearch", searchRequest.value.index, searchRequest.value.size)
+  searchRequest.value.query.name = searchValue.value
+  searchRequest.value.query.desc = searchValue.value
+  searchRequest.value.query.spec = searchValue.value
+  searchRequest.value.query.size = searchValue.value
   uni.request({
     url: BaseURL + "/api/v1/commodity/commodity/search",
     method: 'POST',
@@ -82,7 +130,11 @@ function onSearch(e:any) {
 onLoad(() => {
   searchRequest.value.index = 0
   searchRequest.value.size=pageList[0].value
+  uni.$on('refreshCommodityCommodity', onSearch); //注册全局事件（创建/修改/删除）之后刷新列表
 	onSearch()
+})
+onUnload(() => {
+  uni.$off('refreshCommodityCommodity', onSearch) //注销全局事件
 })
 const fields = [
 	{
@@ -129,9 +181,12 @@ const datas = [
 const searchRequest = ref({
   index: 0,
   size: 10,
-  sorts: [],
+  sorts: ['-updated_at'],
   query: {
-    name: ""
+    name: "",
+    desc: "",
+    spec: "",
+    size: ""
   },
 });
 
@@ -189,5 +244,7 @@ const pageList=[
 	width: 80%;
 }
 
-
+.table-head{
+  background-color: lightblue;
+}
 </style>
