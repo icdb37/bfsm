@@ -1,8 +1,8 @@
 <template>
 	<view>
 		<view class="search-create">
-			<uni-search-bar @confirm="onSearch" cancelButton=false :focus="true" v-model="searchValue"/>
-			<button type="primary" @click="onCraete">新建</button>
+			<uni-search-bar class="search-create-search" @confirm="onSearch" cancelButton=false :focus="true" v-model="searchValue"/>
+			<button class="search-create-create" type="primary" @click="onCraete">新建</button>
 		</view>
 		<!-- 商品列表 -->
     <view>
@@ -220,6 +220,14 @@ const pageList=[
 <style>
 .search-create {
 	display: flex;
+}
+.search-create-search {
+	margin-left: 2px;
+}
+.search-create-create {
+	margin-right: 2px;
+  margin-top: 3px;
+  height: 80%;
 }
 
 .scroll-view-item_H {

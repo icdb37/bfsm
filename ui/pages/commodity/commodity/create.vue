@@ -32,6 +32,7 @@
 
 <script lang="ts" setup>
   import { ref } from 'vue';
+  import { BaseURL } from '@/xapi/xapi';
 
   const popup = ref(null);
   const tip = ref({
@@ -48,7 +49,7 @@
 
   function submit() {
     uni.request({
-      url: "http://localhost:8080/api/v1/commodity/commodity",
+      url: `${BaseURL}/api/v1/commodity/commodity`,
       method: 'POST',
       data: form.value,
       success: (res) => {

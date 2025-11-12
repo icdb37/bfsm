@@ -17,9 +17,9 @@ type companyImpl struct {
 	repo store.Tabler
 }
 
-func (c *companyImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCompany]) (resp *coModel.SearchResponse[model.SimpleCompany], err error) {
+func (c *companyImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCompany]) (resp *coModel.SearchResponse[model.EntireCompany], err error) {
 	qf := store.Unmarshal(req.Query)
-	resp = &coModel.SearchResponse[model.SimpleCompany]{}
+	resp = &coModel.SearchResponse[model.EntireCompany]{}
 	pf := req.GetPage()
 	if resp.Total, err = c.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
 		logx.Error("search companies failed", "error", err)

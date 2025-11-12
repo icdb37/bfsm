@@ -42,6 +42,13 @@
 			{
 				"navigationBarTitleText" : "企业管理"
 			}
+		},
+		{
+			"path" : "pages/company/company/create",
+			"style" : 
+			{
+				"navigationBarTitleText" : "企业创建"
+			}
 		}
 	],
 	"globalStyle": {

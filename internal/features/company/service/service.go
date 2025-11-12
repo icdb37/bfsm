@@ -13,7 +13,7 @@ import (
 
 // CompanyServer - 企业服务接口
 type CompanyServer interface {
-	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCompany]) (resp *coModel.SearchResponse[model.SimpleCompany], err error)
+	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCompany]) (resp *coModel.SearchResponse[model.EntireCompany], err error)
 	Create(ctx context.Context, info *model.EntireCompany) error
 	Update(ctx context.Context, info *model.EntireCompany) error
 	Delete(ctx context.Context, id string) error
