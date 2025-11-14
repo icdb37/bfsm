@@ -24,9 +24,7 @@ func (u *commodityHandler) search(c echo.Context) error {
 		logx.Error("search commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	if req.Query.CompanyID == "" {
-		return c.JSON(http.StatusBadRequest, "搜索企业商品时企业标识不能为空")
-	}
+	req.Query.CompanyID = c.Param(field.CompanyID)
 	resp, err := u.s.Search(ctx, req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
@@ -46,21 +44,21 @@ func (u *commodityHandler) get(c echo.Context) error {
 }
 
 func (u *commodityHandler) create(c echo.Context) error {
-	info := &model.EntireCommodity{}
+	infos := []*model.EntireCommodity{}
 	ctx := c.Request().Context()
-	if err := c.Bind(info); err != nil {
+	if err := c.Bind(&infos); err != nil {
 		logx.Error("create commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	if info.CompanyID == "" {
-		return c.JSON(http.StatusBadRequest, "创建企业商品时企业标识不能为空")
+	for _, item := range infos {
+		item.CompanyID = c.Param(field.CompanyID)
 	}
-	if err := u.s.Create(ctx, info); err != nil {
+	if err := u.s.Create(ctx, infos); err != nil {
 		logx.Error("create commodity failed", "error", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	logx.Info("create commodity success", field.ID, info.ID)
-	return c.JSON(http.StatusOK, coModel.NewIDResponse(info.ID))
+	logx.Info("create commodity success")
+	return nil
 }
 
 func (u *commodityHandler) update(c echo.Context) error {
@@ -71,6 +69,7 @@ func (u *commodityHandler) update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	info.ID = c.Param(field.ID)
+	info.CompanyID = c.Param(field.CompanyID)
 	if err := u.s.Update(ctx, info); err != nil {
 		logx.Error("update commodity failed", "error", err)
 		return c.JSON(http.StatusInternalServerError, err)

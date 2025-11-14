@@ -91,3 +91,20 @@ func NewParam(field string, format string, args ...any) *ErrParam {
 		Message: fmt.Sprintf(format, args...),
 	}
 }
+
+// ErrMessage 消息异常
+type ErrMessage struct {
+	Message string `json:"message,omitempty"`
+}
+
+// Error 实现 error 接口
+func (e *ErrMessage) Error() string {
+	return e.Message
+}
+
+// NewMessage 创建消息异常
+func NewMessage(format string, args ...any) *ErrMessage {
+	return &ErrMessage{
+		Message: fmt.Sprintf(format, args...),
+	}
+}

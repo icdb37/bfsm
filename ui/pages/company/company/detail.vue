@@ -2,32 +2,22 @@
   <view class="form-container">
     <uni-forms :modelValue="form">
       <uni-forms-item label="名称" name="name">
-        <uni-easyinput v-model="form.name" placeholder="请输入名称" />
+        <uni-easyinput v-model="form.name" disabled placeholder="请输入名称" />
       </uni-forms-item>
       <uni-forms-item label="描述" name="desc">
-        <uni-easyinput v-model="form.desc" placeholder="请输入描述" />
+        <uni-easyinput v-model="form.desc" disabled placeholder="请输入描述" />
       </uni-forms-item>
       <uni-forms-item label="地址" name="address">
-        <uni-easyinput v-model="form.address" placeholder="请输入地址" />
+        <uni-easyinput v-model="form.address" disabled placeholder="请输入地址" />
       </uni-forms-item>
       <uni-forms-item label="联系方式" name="contacts">
-        <view class="contact-item-container">
-          <button size="mini" type="primary" :disabled="disabledAddContact" @click="onAddContact">+</button>
-        </view>
         <uni-list>
           <view class="contact-item-container" v-for="(item,index) in form.contacts" >
             <uni-list-item :key="index" :title="item.name" :note="item.phone" />
-            <button class="contact-item-chg" type="success" size="mini" @click="onChgContact(index)">编辑</button>
-            <button class="contact-item-del" type="warn" size="mini" @click="onDelContact(index)">删除</button>
           </view>
         </uni-list>
       </uni-forms-item>
     </uni-forms>
-
-    <view class="actions">
-      <button type="primary" @click="submit">保存</button>
-      <button type="default" @click="cancel">取消</button>
-    </view>
     <view>
       <uni-popup ref="popupTip" type="message">
         <uni-popup-message :type="tip.type" :message="tip.message" :duration="2000"></uni-popup-message>
@@ -57,18 +47,17 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
   import { BaseURL } from '@/xapi/xapi';
-
+  import { onLoad } from '@dcloudio/uni-app';
+  
+  let baseURL = ""; // 页面加装时初始化
+  let companyID = ""; // 页面加装时初始化
+  
   const popupTip = ref(null);
   const tip = ref({
     type: 'success',
     message: '成功'
   })
   const popupContact = ref(null);
-  const newContact = ref({
-    name: '',
-    phone: '',
-    desc: '',
-  });
   const form = ref({
     name: '',
     desc: '',
@@ -77,83 +66,46 @@
     price: 0,
     contacts: [],
   });
-  const disabledAddContact = ref(false);
-  let posUpdateContact = -1;
   
-  function onAddContact() {
-    disabledAddContact.value = true;
-    newContact.value.name = '';
-    newContact.value.phone = '';
-    newContact.value.desc = '';
-    posUpdateContact = -1;
-    popupContact.value.open();
-  }
-  function onDelContact(pos:any){
-    form.value.contacts.splice(pos,1)
-    disabledAddContact.value = false;
-  }
-  
-  function onChgContact(pos:any){
-    posUpdateContact = pos;
-    newContact.value.name = form.value.contacts[posUpdateContact].name;
-    newContact.value.phone = form.value.contacts[posUpdateContact].phone;
-    newContact.value.desc = form.value.contacts[posUpdateContact].desc;
-    popupContact.value.open();
-  }
-  
-  function onAddContactConfirm() {
-    popupContact.value.close();
-    if (posUpdateContact < 0) {
-      form.value.contacts.push({...newContact.value});
-    } else {
-       form.value.contacts[posUpdateContact].name = newContact.value.name;
-       form.value.contacts[posUpdateContact].phone = newContact.value.phone;
-       form.value.contacts[posUpdateContact].desc = newContact.value.desc;
-    }
-    if (form.value.contacts.length < 3) {
-      disabledAddContact.value = false;
-    }
-  }
-  
-  function onAddContactCancel() {
-    popupContact.value.close();
-    disabledAddContact.value = false;
-  }
-  
-  function submit() {
+  function getDetail(id : string) {
     uni.request({
-      url: `${BaseURL}/api/v1/company/company`,
-      method: 'POST',
-      data: form.value,
+      url: `${baseURL}/${id}`,
+      method: 'GET',
       success: (res) => {
         console.log("success", res)
-        if (res.statusCode == 200) {
-          tip.value.type = 'success'
-          tip.value.message = '成功'
-          setTimeout(
-            () => {
-              uni.navigateBack();
-              uni.$emit('refreshCompanyCompany')
-            },
-            500);
-        } else {
+        if (res.statusCode != 200) {
           tip.value.type = 'error'
           tip.value.message = res.data.message
+          popup.value.open();
         }
-        popupTip.value.open();
+        form.value = res.data
       },
       fail: (err) => {
         tip.value.type = 'error'
         tip.value.message = err.data
-        popupTip.value.open();
-        console.log("fail", err)
+        popup.value.open();
       }
     })
   }
-
-  function cancel() {
-    uni.navigateBack();
-  }
+  onLoad((option) => {
+    companyID = option.id;
+    if (companyID == undefined) {
+      companyID = "1cfd04fe-d23c-46ab-9b4f-76050813ced5"
+    }
+    baseURL = `${BaseURL}/api/v1/company`
+    if (option.id) {
+      getDetail(option.id)
+      return
+    }
+    tip.value.type = 'error'
+    tip.value.message = "商品标识无效"
+    popup.value.open();
+    setTimeout(
+      () => {
+        uni.navigateBack();
+      },
+      500);
+  })
 </script>
 
 <style>

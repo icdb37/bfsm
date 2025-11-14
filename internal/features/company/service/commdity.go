@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/icdb37/bfsm/internal/constx/field"
 	"github.com/icdb37/bfsm/internal/features/company/model"
@@ -46,13 +47,36 @@ func (c *commodityImpl) Get(ctx context.Context, id string) (*model.EntireCommod
 }
 
 // Create 创建商品
-func (c *commodityImpl) Create(ctx context.Context, info *model.EntireCommodity) error {
-	logx.Info("create commodity", "info", info)
-	if err := utils.ProcessAll(ctx, info, cfpx.ProcessCreate); err != nil {
+func (c *commodityImpl) Create(ctx context.Context, infos []*model.EntireCommodity) error {
+	logx.Info("create commodity", "infos", infos)
+	for _, info := range infos {
+		if err := utils.ProcessAll(ctx, info, cfpx.ProcessCreate); err != nil {
+			logx.Error("create commodity failed", "error", err)
+			return err
+		}
+	}
+	hashs := []string{}
+	for _, info := range infos {
+		hashs = append(hashs, info.Hash)
+	}
+	where := store.NewFilter().
+		Eq(field.CompanyID, infos[0].CompanyID).
+		In(field.Hash, hashs)
+	dupInfos := []*model.EntireCommodity{}
+	if err := c.repo.Query(ctx, where, &dupInfos); err != nil {
 		logx.Error("create commodity failed", "error", err)
 		return err
 	}
-	if err := c.repo.Insert(ctx, info); err != nil {
+	if len(dupInfos) > 0 {
+		logx.Error("create commodity failed", "error", "commodity already exist", "hashs", hashs)
+		return errx.NewMessage("商品已存在：%v",
+			utils.Converts(dupInfos,
+				func(info *model.EntireCommodity) string {
+					return fmt.Sprintf("%s-%s-%s", info.Name, info.Spec, info.Size)
+				},
+			))
+	}
+	if err := c.repo.Insert(ctx, utils.Converts(infos, func(v *model.EntireCommodity) any { return v })...); err != nil {
 		logx.Error("create commodity failed", "error", err)
 		return err
 	}

@@ -57,7 +57,12 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
   import { BaseURL } from '@/xapi/xapi';
-
+  import { onLoad } from '@dcloudio/uni-app';
+  
+  let baseURL = ""; // 页面加装时初始化
+  let companyID = ""; // 页面加装时初始化
+  
+  const maxContacts = 3;
   const popupTip = ref(null);
   const tip = ref({
     type: 'success',
@@ -110,9 +115,7 @@
        form.value.contacts[posUpdateContact].phone = newContact.value.phone;
        form.value.contacts[posUpdateContact].desc = newContact.value.desc;
     }
-    if (form.value.contacts.length < 3) {
-      disabledAddContact.value = false;
-    }
+    disabledAddContact.value = form.value.contacts.length >= maxContacts;
   }
   
   function onAddContactCancel() {
@@ -122,8 +125,8 @@
   
   function submit() {
     uni.request({
-      url: `${BaseURL}/api/v1/company/company`,
-      method: 'POST',
+      url: baseURL + "/" + companyID,
+      method: 'PUT',
       data: form.value,
       success: (res) => {
         console.log("success", res)
@@ -154,6 +157,46 @@
   function cancel() {
     uni.navigateBack();
   }
+  function getDetail(id : string) {
+    uni.request({
+      url: `${baseURL}/${id}`,
+      method: 'GET',
+      success: (res) => {
+        console.log("success", res)
+        if (res.statusCode != 200) {
+          tip.value.type = 'error'
+          tip.value.message = res.data.message
+          popup.value.open();
+        }
+        form.value = res.data
+        disabledAddContact.value = form.value.contacts.length >= maxContacts;
+      },
+      fail: (err) => {
+        tip.value.type = 'error'
+        tip.value.message = err.data
+        popup.value.open();
+      }
+    })
+  }
+  onLoad((option) => {
+    companyID = option.id;
+    if (companyID == undefined) {
+      companyID = "1cfd04fe-d23c-46ab-9b4f-76050813ced5"
+    }
+    baseURL = `${BaseURL}/api/v1/company`
+    if (option.id) {
+      getDetail(option.id)
+      return
+    }
+    tip.value.type = 'error'
+    tip.value.message = "商品标识无效"
+    popup.value.open();
+    setTimeout(
+      () => {
+        uni.navigateBack();
+      },
+      500);
+  })
 </script>
 
 <style>

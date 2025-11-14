@@ -23,7 +23,7 @@ type CompanyServer interface {
 // CommodityServer - 商品服务接口
 type CommodityServer interface {
 	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryCommodity]) (resp *coModel.SearchResponse[model.EntireCommodity], err error)
-	Create(ctx context.Context, info *model.EntireCommodity) error
+	Create(ctx context.Context, infos []*model.EntireCommodity) error
 	Update(ctx context.Context, info *model.EntireCommodity) error
 	Delete(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (*model.EntireCommodity, error)

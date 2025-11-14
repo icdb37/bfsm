@@ -49,7 +49,55 @@
 			{
 				"navigationBarTitleText" : "企业创建"
 			}
-		}
+		},
+    {
+    	"path" : "pages/company/company/detail",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : "企业详情"
+    	}
+    },
+    {
+    	"path" : "pages/company/company/update",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : "企业修改"
+    	}
+    },
+    {
+    	"path" : "pages/company/commodity/create",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : "企业商品创建"
+    	}
+    },
+    {
+    	"path" : "pages/company/commodity/update",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : "企业商品修改"
+    	}
+    },
+    {
+    	"path" : "pages/company/commodity/detail",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : "企业商品详情"
+    	}
+    },
+    {
+    	"path" : "pages/company/commodity",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : "企业商品"
+    	}
+    },
+    {
+      "path": "pages/demo/demo",
+      "style": {
+        "navigationBarTitleText": "测试"
+      }
+    }
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

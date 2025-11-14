@@ -3,8 +3,10 @@
 		<view class="search-create">
 			<uni-search-bar class="search-create-search" @confirm="onSearch" cancelButton=false :focus="true" v-model="searchValue"/>
 			<button class="search-create-create" type="primary" size="mini" @click="onCraete">新建</button>
+      <button class="search-create-import" type="primary" size="mini" @click="onImport">导入</button>
+    
 		</view>
-		<!-- 企业列表 -->
+		<!-- 商品列表 -->
     <view>
       <scroll-view class="scroll-view_H" scroll-x="true" scroll-left="100">
         	<uni-table border stripe emptyText="暂无更多数据">
@@ -16,15 +18,11 @@
         		<uni-tr v-for="(item, index) in searchResponse.data" :key="index">
         			<uni-td align="center">{{item.name}}</uni-td>
         			<uni-td align="center">{{item.desc}}</uni-td>
-        			<uni-td align="center">{{item.address}}</uni-td>
-        			<uni-td align="center">
-                <uni-tooltip v-for="(item,index) in item.contacts" :key="index" :content="item.phone" placement="top">
-                  <uni-tag :text="item.name" type="primary"/>
-                </uni-tooltip>
-              </uni-td>
+        			<uni-td align="center">{{item.spec}}</uni-td>
+        			<uni-td align="center">{{item.size}}</uni-td>
+        			<uni-td align="center">{{item.price}}</uni-td>
         			<uni-td>
         				<view class="uni-group">
-                  <button class="uni-button" size="mini" type="default" @click="gotoCommodity(item)">商品</button>
                   <button class="uni-button" size="mini" type="default" @click="onDetail(item)">详情</button>
         					<button class="uni-button" size="mini" type="primary" @click="onUpdate(item)">修改</button>
         					<button class="uni-button" size="mini" type="warn" @click="onTipDelete(item)">删除</button>
@@ -34,7 +32,7 @@
         	</uni-table>
     
           <uni-popup ref="delpopup" type="dialog">
-          	<uni-popup-dialog title="删除企业" :content="delItem.name" :duration="2000" :before-close="true" @close="onDeleteCancel" @confirm="onDeleteConfirm"></uni-popup-dialog>
+          	<uni-popup-dialog title="删除商品" :content="delItem.name" :duration="2000" :before-close="true" @close="onDeleteCancel" @confirm="onDeleteConfirm"></uni-popup-dialog>
           </uni-popup>
       </scroll-view>
       <view class="page-container">
@@ -49,9 +47,10 @@
 import {ref} from 'vue';
 import {onLoad,onUnload} from '@dcloudio/uni-app';
 import {BaseURL} from '../../xapi/xapi';
+const feature = "company";
+let companyID = '1cfd04fe-d23c-46ab-9b4f-76050813ced5';
+let baseURL = `${BaseURL}/api/v1/company/${companyID}/commodity`;
 
-let baseURL = ""; // 页面加装时初始化
-  
 const searchValue = ref('');
 const delpopup = ref(null);
 const delItem = ref({
@@ -61,17 +60,20 @@ const delItem = ref({
 
 function onCraete(){
   uni.navigateTo({
-    url: '/pages/company/company/create',
+    url: `/pages/company/commodity/create?commpan_id=${companyID}`,
     success: (res) => {
       console.log("success", res)
     }
   })
 }
+function onImport() {
+  console.log("onImport")
+}
 
 function onUpdate(item:any){
 	console.log("onUpdate", item)
   uni.navigateTo({
-    url: `/pages/company/company/update?id=${item.id}`,
+    url: `/pages/company/commodity/update?id=${item.id}&commpan_id=${companyID}`,
     success: (res) => {
       console.log("success", res)
     }
@@ -86,7 +88,7 @@ function onTipDelete(e:any) {
 function onDeleteConfirm(){
 	console.log("onDeleteConfirm", delItem.value.id,delItem.value.name)
   uni.request({
-    url: baseURL +"/" + delItem.value.id,
+    url: baseURL+"/" + delItem.value.id,
     method: 'DELETE',
     success: (res) => {
       console.log("success", res)
@@ -102,17 +104,7 @@ function onDeleteCancel(){
 function onDetail(item:any){
 	console.log("onDetail", item)
   uni.navigateTo({
-    url: `/pages/company/company/detail?id=${item.id}`,
-    success: (res) => {
-      console.log("success", res)
-    }
-  })
-}
-
-function gotoCommodity(item:any){
-	console.log("gotoCommodity", item)
-  uni.navigateTo({
-    url: `/pages/company/commodity?company_id=${item.id}`,
+    url: `/pages/company/commodity/detail?id=${item.id}&commpan_id=${companyID}`,
     success: (res) => {
       console.log("success", res)
     }
@@ -141,18 +133,23 @@ function onSearch() {
     },
   })
 }
-function onClickContact(e:any){
-  console.log("onClickContact", e.name,e.phone)
-}
-onLoad(() => {
-  baseURL = `${BaseURL}/api/v1/company`
+
+
+onLoad((option) => {
   searchRequest.value.index = 0
   searchRequest.value.size=pageList[0].value
-  uni.$on('refreshCompanyCompany', onSearch); //注册全局事件（创建/修改/删除）之后刷新列表
+  uni.$on(feature+'CommodityReload', onSearch); //注册全局事件（创建/修改/删除）之后刷新列表
+  if (option.company_id) {
+    companyID = option.company_id
+  }
+  if (companyID == "") {
+    companyID = '1cfd04fe-d23c-46ab-9b4f-76050813ced5';
+  }
+  baseURL = `${BaseURL}/api/v1/company/${companyID}/commodity`;
 	onSearch()
 })
 onUnload(() => {
-  uni.$off('refreshCompanyCompany', onSearch) //注销全局事件
+  uni.$off(feature+'CommodityReload', onSearch) //注销全局事件
 })
 const fields = [
 	{
@@ -164,14 +161,37 @@ const fields = [
 		align: "center"
 	},
 	{
-		name: "地址",
+		name: "规格",
 		align: "center"
 	},
 	{
-		name: "联系方式",
+		name: "尺寸",
+		align: "center"
+	},
+	{
+		name: "价格",
 		align: "center"
 	}
 ]
+
+const datas = [
+	{
+		id: "a1",
+		name: "a1",
+		desc: "a1",
+		spec: "a1",
+		size: "a1",
+		price: 11
+	},
+	{
+		id: "a2",
+		name: "a2",
+		desc: "a2",
+		spec: "a2",
+		size: "a2",
+		price: 12
+	}
+];
 
 const searchRequest = ref({
   index: 0,
@@ -180,7 +200,8 @@ const searchRequest = ref({
   query: {
     name: "",
     desc: "",
-    address: "",
+    spec: "",
+    size: ""
   },
 });
 
@@ -188,7 +209,7 @@ const searchResponse = ref({
   total: 0,
   page: 0,
   size: 10,
-  data: [],
+  data: datas,
 });
 
 const pageList=[
@@ -220,7 +241,12 @@ const pageList=[
 	margin-left: 2px;
 }
 .search-create-create {
-	margin-right: 3px;
+	margin-right: 1px;
+  height: 80%;
+}
+.search-create-import {
+	margin-right: 2px;
+  margin-left: 1px;
   height: 80%;
 }
 

@@ -18,7 +18,7 @@ func Wire() {
 
 func registCompany(e *echo.Echo, s service.CompanyServer) {
 	u := &companyHandler{s: s}
-	g := e.Group("/api/v1/company/company")
+	g := e.Group("/api/v1/company")
 	{
 		g.POST("/search", u.search)
 		g.GET("/:id", u.get)
@@ -30,7 +30,7 @@ func registCompany(e *echo.Echo, s service.CompanyServer) {
 
 func registCommodity(e *echo.Echo, s service.CommodityServer) {
 	u := &commodityHandler{s: s}
-	g := e.Group("/api/v1/company/commodity")
+	g := e.Group("/api/v1/company/:company_id/commodity")
 	{
 		g.POST("/search", u.search)
 		g.GET("/:id", u.get)
