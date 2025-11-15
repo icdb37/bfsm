@@ -22,7 +22,7 @@ func (t *templateImpl) Search(ctx context.Context, req *coModel.SearchRequest[mo
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.EntireTemplate]{}
 	pf := req.GetPage()
-	if resp.Total, err = t.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = t.repo.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search template commodity failed", "error", err)
 		return nil, err
 	}

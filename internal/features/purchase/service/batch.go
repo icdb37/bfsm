@@ -26,7 +26,7 @@ func (b *batchImpl) Search(ctx context.Context, req *coModel.SearchRequest[model
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.SimplePurchase]{}
 	pf := req.GetPage()
-	if resp.Total, err = b.repoBatch.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = b.repoBatch.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search purchase batch failed", "error", err)
 		return nil, err
 	}

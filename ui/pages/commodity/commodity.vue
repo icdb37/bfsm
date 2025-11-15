@@ -122,7 +122,7 @@ function onSearch() {
     success: (res) => {
       console.log("success", res)
       searchResponse.value.total = res.data.total
-      searchResponse.value.data = res.data.datas
+      searchResponse.value.data = res.data.data
     },
   })
 }

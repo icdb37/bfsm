@@ -22,7 +22,7 @@ func (c *commodityImpl) Search(ctx context.Context, req *coModel.SearchRequest[m
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.EntireCommodity]{}
 	pf := req.GetPage()
-	if resp.Total, err = c.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = c.repo.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search commodity failed", "error", err)
 		return nil, err
 	}

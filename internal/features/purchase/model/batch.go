@@ -6,6 +6,7 @@ import (
 	"github.com/icdb37/bfsm/internal/constx/enum"
 	"github.com/icdb37/bfsm/internal/constx/featc"
 	coModel "github.com/icdb37/bfsm/internal/model"
+	"github.com/icdb37/bfsm/internal/utils"
 )
 
 // ExtraExpense 额外费用
@@ -16,6 +17,11 @@ type ExtraExpense struct {
 	Desc string `json:"desc" xorm:"varchar(500) 'desc'" cfpx:"desc"`
 	// Amount 额外费用，分
 	Amount int32 `json:"amount" xorm:"int 'amount'"`
+}
+
+// Normalize -
+func (e *ExtraExpense) Normalize() {
+	utils.PstrTrims(&e.Name, &e.Desc)
 }
 
 // QueryPurchase 商品查询参数
@@ -40,6 +46,17 @@ type QueryPurchase struct {
 	UpdatedAt *coModel.RangeX[time.Time] `json:"updated_at" where:"range,updated_at,omitempty"`
 }
 
+type SimplePurchaseGoods struct {
+	// CompanyName 企业名称
+	CompanyName string `json:"company_name" xorm:"varchar(200) 'company_name'"`
+	// CommodityTitle 商品名称
+	CommodityTitle string `json:"commodity_title" xorm:"varchar(200) 'commodity_title'"`
+	// CommodityHash 商品哈希值
+	CommodityHash string `json:"commodity_hash" xorm:"varchar(64) 'commodity_hash'"`
+	// Count 商品数量
+	Count int32 `json:"count" xorm:"int 'count'"`
+}
+
 // SimplePurchase 采购订单
 type SimplePurchase struct {
 	Xid uint32 `json:"xid" xorm:"pk autoincr 'xid'"`
@@ -61,12 +78,15 @@ type SimplePurchase struct {
 	AmountExtra int32 `json:"amount_extra" xorm:"int 'amount_extra'" cfpx:"amount_extra"`
 	// AmountTotal 采购订单金额，分
 	AmountTotal int32 `json:"amount_total" xorm:"int 'amount_total'" cfpx:"amount_total"`
+	// SimpleGoods 基本商品列表
+	SimpleGoods []*SimplePurchaseGoods `json:"simple_goods" xorm:"json 'simple_goods'"`
 }
 
 func (e *SimplePurchase) Normalize() {
 	e.AmountGoods = 0
 	e.AmountExtra = 0
 	e.AmountTotal = 0
+	e.Status = enum.StatusCodeSubmitted
 }
 
 // TableName 采购订单表名
@@ -97,6 +117,20 @@ type PurchaseCompany struct {
 	AmountClear int32 `json:"amount_clear" xorm:"int 'amount_clear'"`
 }
 
+// Normalize -
+func (e *PurchaseCompany) Normalize() {
+	e.AmountGoods = 0
+	e.AmountTotal = 0
+	e.AmountClear = 0
+	utils.PstrTrims(&e.Desc)
+	for _, g := range e.Goods {
+		g.Normalize()
+		e.AmountGoods += g.Amount
+	}
+	e.AmountTotal = e.AmountGoods + e.AmountExtra
+	e.Company.Normalize()
+}
+
 // PurchaseBatch 采购批次
 type PurchaseBatch struct {
 	SimplePurchase `json:",inline" xorm:"extends"`
@@ -119,6 +153,7 @@ func (e *PurchaseBatch) GetBatch() coModel.RefBatch {
 func (e *PurchaseBatch) Normalize() {
 	e.SimplePurchase.Normalize()
 	for _, t := range e.Extras {
+		t.Normalize()
 		e.AmountExtra += t.Amount
 	}
 	for _, c := range e.Companies {
@@ -126,6 +161,22 @@ func (e *PurchaseBatch) Normalize() {
 		for _, g := range c.Goods {
 			g.Amount = g.Count * g.Price
 			c.AmountGoods += g.Amount
+			i, size := 0, len(e.SimpleGoods)
+			for i < size {
+				if e.SimpleGoods[i].CommodityHash == g.Hash {
+					e.SimpleGoods[i].Count += g.Count
+					break
+				}
+				i++
+			}
+			if i == size {
+				e.SimpleGoods = append(e.SimpleGoods, &SimplePurchaseGoods{
+					CompanyName:    c.Company.CompanyName,
+					CommodityTitle: g.Name + "-" + g.Spec + "-" + g.Size,
+					CommodityHash:  g.Hash,
+					Count:          g.Count,
+				})
+			}
 		}
 		c.AmountTotal = c.AmountGoods + c.AmountExtra
 		e.AmountExtra += c.AmountExtra // 采购额外费用金额

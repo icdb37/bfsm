@@ -18,7 +18,7 @@ func (g *goodsImpl) Search(ctx context.Context, req *coModel.SearchRequest[model
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.PurchaseGoods]{}
 	pf := req.GetPage()
-	if resp.Total, err = g.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = g.repo.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search goods failed", "error", err)
 		return nil, err
 	}

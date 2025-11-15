@@ -21,7 +21,7 @@ func (d *dealImpl) Search(ctx context.Context, req *coModel.SearchRequest[model.
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.BillDeal]{}
 	pf := req.GetPage()
-	if resp.Total, err = d.repoDeal.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = d.repoDeal.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search bill deal failed", "error", err)
 		return nil, err
 	}

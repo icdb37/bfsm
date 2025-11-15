@@ -21,12 +21,21 @@ func (c *companyImpl) Search(ctx context.Context, req *coModel.SearchRequest[mod
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.EntireCompany]{}
 	pf := req.GetPage()
-	if resp.Total, err = c.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = c.repo.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search companies failed", "error", err)
 		return nil, err
 	}
 	return resp, nil
 }
+
+func (c *companyImpl) SelectAll(ctx context.Context) (resp []*model.SimpleCompany, err error) {
+	if err := c.repo.Query(ctx, store.NewFilter(), &resp); err != nil {
+		logx.Error("select all companies failed", "error", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *companyImpl) Get(ctx context.Context, id string) (*model.EntireCompany, error) {
 	info := &model.EntireCompany{}
 	if err := c.repo.Query(ctx, store.NewFilter().Eq(field.ID, id), info); err != nil {

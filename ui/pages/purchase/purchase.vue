@@ -10,21 +10,21 @@
         	<uni-table border stripe emptyText="暂无更多数据">
         		<uni-tr border stripe >
         			<uni-th class="table-head" v-for="(item, index) in fields" :align="item.align" :key="index">{{item.name}}</uni-th>
-        			<uni-th class="table-head" width="270" align="center">操作</uni-th>
+        			<uni-th class="table-head" width="210" align="center">操作</uni-th>
         		</uni-tr>
         		<!-- 表格数据行 -->
         		<uni-tr v-for="(item, index) in searchResponse.data" :key="index">
         			<uni-td align="center">{{item.name}}</uni-td>
         			<uni-td align="center">{{item.desc}}</uni-td>
-        			<uni-td align="center">{{item.address}}</uni-td>
         			<uni-td align="center">
-                <uni-tooltip v-for="(item,index) in item.contacts" :key="index" :content="item.phone" placement="top">
-                  <uni-tag :text="item.name" type="primary"/>
+                <uni-tooltip v-for="(item,index) in item.simple_goods" :key="index" :content="item.count" placement="top">
+                  <uni-tag :text="item.commodity_title" type="primary"/>
                 </uni-tooltip>
               </uni-td>
+              <uni-td align="center">{{status[item.status]}}</uni-td>
+              <uni-td align="center">{{item.amount_total}}</uni-td>
         			<uni-td>
         				<view class="uni-group">
-                  <button class="uni-button" size="mini" type="default" @click="gotoCommodity(item)">商品</button>
                   <button class="uni-button" size="mini" type="default" @click="onDetail(item)">详情</button>
         					<button class="uni-button" size="mini" type="primary" @click="onUpdate(item)">修改</button>
         					<button class="uni-button" size="mini" type="warn" @click="onTipDelete(item)">删除</button>
@@ -48,9 +48,9 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {onLoad,onUnload} from '@dcloudio/uni-app';
-import {BaseURL} from '../../xapi/xapi';
+import {BaseURL} from '@/xapi/xapi';
 
-let baseURL = ""; // 页面加装时初始化
+let baseURL = `${BaseURL}/api/v1/purchase/batch`; // 页面加装时初始化
   
 const searchValue = ref('');
 const delpopup = ref(null);
@@ -61,7 +61,7 @@ const delItem = ref({
 
 function onCraete(){
   uni.navigateTo({
-    url: '/pages/company/company/create',
+    url: '/pages/purchase/batch/create',
     success: (res) => {
       console.log("success", res)
     }
@@ -71,7 +71,7 @@ function onCraete(){
 function onUpdate(item:any){
 	console.log("onUpdate", item)
   uni.navigateTo({
-    url: `/pages/company/company/update?id=${item.id}`,
+    url: `/pages/purchase/batch/update?id=${item.id}`,
     success: (res) => {
       console.log("success", res)
     }
@@ -102,22 +102,13 @@ function onDeleteCancel(){
 function onDetail(item:any){
 	console.log("onDetail", item)
   uni.navigateTo({
-    url: `/pages/company/company/detail?id=${item.id}`,
+    url: `/pages/purchase/batch/detail?id=${item.id}`,
     success: (res) => {
       console.log("success", res)
     }
   })
 }
 
-function gotoCommodity(item:any){
-	console.log("gotoCommodity", item)
-  uni.navigateTo({
-    url: `/pages/company/commodity?company_id=${item.id}`,
-    success: (res) => {
-      console.log("success", res)
-    }
-  })
-}
 function onChangePage(e:any) {
   console.log("onChangePage", e)
   searchRequest.value.index=e.current-1
@@ -145,14 +136,14 @@ function onClickContact(e:any){
   console.log("onClickContact", e.name,e.phone)
 }
 onLoad(() => {
-  baseURL = `${BaseURL}/api/v1/company`
+  baseURL = `${BaseURL}/api/v1/purchase/batch`;
   searchRequest.value.index = 0
   searchRequest.value.size=pageList[0].value
-  uni.$on('refreshCompanyCompany', onSearch); //注册全局事件（创建/修改/删除）之后刷新列表
+  uni.$on('purchaseBatchRefresh', onSearch); //注册全局事件（创建/修改/删除）之后刷新列表
 	onSearch()
 })
 onUnload(() => {
-  uni.$off('refreshCompanyCompany', onSearch) //注销全局事件
+  uni.$off('purchaseBatchRefresh', onSearch) //注销全局事件
 })
 const fields = [
 	{
@@ -164,15 +155,19 @@ const fields = [
 		align: "center"
 	},
 	{
-		name: "地址",
+		name: "商品",
 		align: "center"
 	},
+  {
+  	name: "状态",
+  	align: "center"
+  },
 	{
-		name: "联系方式",
+		name: "金额(分)",
 		align: "center"
 	}
 ]
-
+const status = ["未定义", "已提交", "已审核", "已完成", "已取消", "已关闭"];
 const searchRequest = ref({
   index: 0,
   size: 10,

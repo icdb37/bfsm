@@ -25,7 +25,7 @@ func (i *inventoryImpl) SearchLast(ctx context.Context, req *coModel.SearchReque
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.LastCommodity]{}
 	pf := req.GetPage()
-	if resp.Total, err = i.repoLast.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = i.repoLast.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search last commodity failed", "error", err)
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func (i *inventoryImpl) SearchFull(ctx context.Context, req *coModel.SearchReque
 	qf := store.Unmarshal(req.Query)
 	resp = &coModel.SearchResponse[model.FullGoods]{}
 	pf := req.GetPage()
-	if resp.Total, err = i.repoFull.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = i.repoFull.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search full commodity failed", "error", err)
 		return nil, err
 	}

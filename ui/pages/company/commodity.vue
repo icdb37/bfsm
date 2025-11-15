@@ -68,6 +68,12 @@ function onCraete(){
 }
 function onImport() {
   console.log("onImport")
+  uni.navigateTo({
+    url: `/pages/company/commodity/import?commpan_id=${companyID}`,
+    success: (res) => {
+      console.log("success", res)
+    }
+  })
 }
 
 function onUpdate(item:any){
@@ -129,7 +135,7 @@ function onSearch() {
     success: (res) => {
       console.log("success", res)
       searchResponse.value.total = res.data.total
-      searchResponse.value.data = res.data.datas
+      searchResponse.value.data = res.data.data
     },
   })
 }

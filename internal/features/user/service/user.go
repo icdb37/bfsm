@@ -20,7 +20,7 @@ func (u *UserServer) SearchUser(ctx context.Context, req *model.SearchRequest) (
 	qf := store.Unmarshal(req.Query)
 	resp = &model.SearchResponse{}
 	pf := req.GetPage()
-	if resp.Total, err = u.repo.Search(ctx, qf, pf, &(resp.Datas)); err != nil {
+	if resp.Total, err = u.repo.Search(ctx, qf, pf, &(resp.Data)); err != nil {
 		logx.Error("search users failed", "error", err)
 		return nil, err
 	}

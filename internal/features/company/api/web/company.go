@@ -23,12 +23,26 @@ func (u *companyHandler) search(c echo.Context) error {
 		logx.Error("search company bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
+	if req.Query == nil {
+		req.Query = &model.QueryCompany{}
+	}
 	resp, err := u.s.Search(ctx, req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, resp)
 }
+
+func (u *companyHandler) selectAll(c echo.Context) error {
+	ctx := c.Request().Context()
+	resp, err := u.s.SelectAll(ctx)
+	if err != nil {
+		logx.Error("select all company failed", "error", err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, resp)
+}
+
 func (u *companyHandler) get(c echo.Context) error {
 	id := c.Param(field.ID)
 	ctx := c.Request().Context()

@@ -86,6 +86,13 @@
     	}
     },
     {
+    	"path" : "pages/company/commodity/import",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : "企业商品导入"
+    	}
+    },
+    {
     	"path" : "pages/company/commodity",
     	"style" : 
     	{
@@ -96,6 +103,18 @@
       "path": "pages/demo/demo",
       "style": {
         "navigationBarTitleText": "测试"
+      }
+    },
+    {
+      "path": "pages/purchase/purchase",
+      "style": {
+        "navigationBarTitleText": "采购列表"
+      }
+    },
+    {
+      "path": "pages/purchase/batch/create",
+      "style": {
+        "navigationBarTitleText": "创建采购"
       }
     }
 	],

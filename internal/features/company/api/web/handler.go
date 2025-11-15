@@ -21,6 +21,7 @@ func registCompany(e *echo.Echo, s service.CompanyServer) {
 	g := e.Group("/api/v1/company")
 	{
 		g.POST("/search", u.search)
+		g.GET("/select-all", u.selectAll)
 		g.GET("/:id", u.get)
 		g.POST("", u.create)
 		g.PUT("/:id", u.update)

@@ -24,6 +24,9 @@ func (u *commodityHandler) search(c echo.Context) error {
 		logx.Error("search commodity bind failed", "error", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
+	if req.Query == nil {
+		req.Query = &model.QueryCommodity{}
+	}
 	req.Query.CompanyID = c.Param(field.CompanyID)
 	resp, err := u.s.Search(ctx, req)
 	if err != nil {

@@ -41,7 +41,7 @@ func (q *SearchRequest[T]) GetPage() *QueryPage {
 // SearchResponse 搜索应答
 type SearchResponse[T any] struct {
 	Total int64 `json:"total"`
-	Datas []*T  `json:"datas"`
+	Data  []*T  `json:"data"`
 }
 
 // IDResponse ID应答
