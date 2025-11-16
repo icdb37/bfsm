@@ -1,63 +1,69 @@
 <template>
-  <view>
-    <!-- “更多”下拉列表，始终显示“更多”，不随选择变化 -->
-    <uni-data-select
-      class="more-select"
-      placeholder="更多"
-      :clear="false"
-      v-model="moreValue"
-      :localdata="moreRange"
-      @change="onMoreChange"
-    />
-  </view>
+	<view>
+		<Demo1 />
+	</view>
+	<view>
+		<button type="primary" @click="onPrint">测试</button>
+		<scroll-view scroll-y="true" class="scroll-Y">
+			<uni-list class="scroll-Y">
+				<uni-list-item v-for="(item,index) in listItems" :key="index" 
+					:title="item.getTitle()"
+					:note="item.getNote()"
+					:showSwitch="true" :switchChecked="false"
+					@switchChange="onSwitchChange($event,index)"></uni-list-item>
+			</uni-list>
+		</scroll-view>
+		<view class="bottom-list-button ">
+		<button type="default" @click="onCancel">取消</button>
+		<button type="primary" @click="onSubmit">提交</button>
+		</view>
+	</view>
 </template>
 
-<script setup>
-  import { ref } from 'vue';
+<script lang="ts" setup>
+	import Demo1 from './demo1';
+	import { ref } from 'vue';
+	import {examples,ListSelecter} from './model';
+	import {onLoad} from '@dcloudio/uni-app';
 
-  // 操作函数
-  const onDetail = () => {
-    console.log('详情');
-  };
-  const onEdit = () => {
-    console.log('修改');
-  };
-  const onDelete = () => {
-    console.log('删除');
-  };
+	const checkedItems = ref<number[]>([]);
+	const listItems = ref<ListSelecter[]>([]);
 
-  // “更多”下拉值与选项
-  const moreValue = ref('');
-  const moreRange = [
-    { value: 'detail', text: '详情' },
-    { value: 'edit', text: '修改' },
-    { value: 'delete', text: '删除' },
-  ];
-
-  // 选择后执行对应操作，并重置为占位显示“更多”
-  const onMoreChange = (e) => {
-    const val = (e && typeof e === 'object') ? (e.detail?.value ?? e.value) : e;
-    switch (val) {
-      case 'detail':
-        onDetail();
-        break;
-      case 'edit':
-        onEdit();
-        break;
-      case 'delete':
-        onDelete();
-        break;
-      default:
-        console.log('未知操作', val);
-    }
-    // 立即清空以保持显示占位符“更多”
-    moreValue.value = '';
-  };
+	function onSwitchChange(e : { value : boolean }, checkedIndex : number) {
+		console.log(e, checkedIndex);
+		let posExists = -1;
+		for (let i = 0; i < checkedItems.value.length; i++) {
+			if (checkedIndex == checkedItems.value[i]) {
+				posExists = i;
+				break;
+			}
+		}
+		if (e.value && posExists == -1) {
+			checkedItems.value.push(checkedIndex)
+		} else if (!e.value && posExists != -1) {
+			checkedItems.value.splice(posExists, 1)
+		}
+	}
+	function onPrint() {
+		console.log("checkedItems", checkedItems.value.join(","));
+	}
+	function onSubmit() {
+		console.log("checkedItems", checkedItems.value.join(","));
+	}
+	function onCancel(){
+		
+	}
+onLoad(() => {
+	listItems.value = examples;
+})
 </script>
 
 <style>
-/* 下拉样式可按需调整 */
-.more-select {
-  margin: 12px;
-}
+	.scroll-Y {
+		height: 300px;
+	}
+
+	.bottom-list-button {
+		display: flex;
+	}
 </style>
