@@ -103,7 +103,7 @@ func (q *QueryRefGoods) Normalize() {
 // RefGoods 引用商品信息
 type RefGoods struct {
 	// ID 商品ID
-	ID string `json:"id" xorm:"char(36) 'id'"`
+	ID string `json:"id" xorm:"char(36) unique not null 'id'"`
 	// Goods 商品信息
 	Goods `json:",inline" xorm:"extends"`
 	// RefCompany 引用公司信息

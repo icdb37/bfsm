@@ -1,128 +1,143 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		},
-		{
-			"path": "pages/commodity/commodity",
-			"style": {
-				"navigationBarTitleText": "商品管理"
-			}
-		},
-    {
-    	"path": "pages/commodity/commodity/create",
-    	"style": {
-    		"navigationBarTitleText": "商品创建"
-    	}
+    "pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+        {
+            "path": "pages/index/index",
+            "style": {
+                "navigationBarTitleText": "uni-app"
+            }
+        },
+        {
+            "path": "pages/commodity/commodity",
+            "style": {
+                "navigationBarTitleText": "商品管理"
+            }
+        },
+        {
+            "path": "pages/commodity/commodity/create",
+            "style": {
+                "navigationBarTitleText": "商品创建"
+            }
+        },
+        {
+            "path": "pages/commodity/commodity/update",
+            "style": {
+                "navigationBarTitleText": "商品修改"
+            }
+        },
+        {
+            "path": "pages/commodity/commodity/detail",
+            "style": {
+                "navigationBarTitleText": "商品详情"
+            }
+        },
+        {
+            "path": "pages/commodity/template",
+            "style": {
+                "navigationBarTitleText": "商品模板"
+            }
+        },
+        {
+            "path": "pages/company/company",
+            "style": {
+                "navigationBarTitleText": "企业管理"
+            }
+        },
+        {
+            "path": "pages/company/company/create",
+            "style": {
+                "navigationBarTitleText": "企业创建"
+            }
+        },
+        {
+            "path": "pages/company/company/detail",
+            "style": {
+                "navigationBarTitleText": "企业详情"
+            }
+        },
+        {
+            "path": "pages/company/company/update",
+            "style": {
+                "navigationBarTitleText": "企业修改"
+            }
+        },
+        {
+            "path": "pages/company/commodity/create",
+            "style": {
+                "navigationBarTitleText": "企业商品创建"
+            }
+        },
+        {
+            "path": "pages/company/commodity/update",
+            "style": {
+                "navigationBarTitleText": "企业商品修改"
+            }
+        },
+        {
+            "path": "pages/company/commodity/detail",
+            "style": {
+                "navigationBarTitleText": "企业商品详情"
+            }
+        },
+        {
+            "path": "pages/company/commodity/import",
+            "style": {
+                "navigationBarTitleText": "企业商品导入"
+            }
+        },
+        {
+            "path": "pages/company/commodity",
+            "style": {
+                "navigationBarTitleText": "企业商品"
+            }
+        },
+        {
+            "path": "pages/demo/demo",
+            "style": {
+                "navigationBarTitleText": "测试"
+            }
+        },
+        {
+            "path": "pages/purchase/purchaseBatch",
+            "style": {
+                "navigationBarTitleText": "采购批次列表"
+            }
+        },
+        {
+            "path": "pages/purchase/batch/create",
+            "style": {
+                "navigationBarTitleText": "创建采购"
+            }
+        },
+        {
+            "path": "pages/purchase/batch/detail",
+            "style": {
+                "navigationBarTitleText": "采购详情"
+            }
+        },
+        {
+            "path": "pages/purchase/batch/update",
+            "style": {
+                "navigationBarTitleText": "采购修改"
+            }
+        },
+        {
+            "path": "pages/purchase/purchaseGoods",
+            "style": {
+                "navigationBarTitleText": "采购商品列表"
+            }
+        },
+        {
+            "path": "pages/purchase/goods/detail",
+            "style": {
+                "navigationBarTitleText": "采购商品详情"
+            }
+        }
+    ],
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "uni-app",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
     },
-    {
-    	"path": "pages/commodity/commodity/update",
-    	"style": {
-    		"navigationBarTitleText": "商品修改"
-    	}
-    },
-    {
-    	"path": "pages/commodity/commodity/detail",
-    	"style": {
-    		"navigationBarTitleText": "商品详情"
-    	}
-    },
-		{
-			"path": "pages/commodity/template",
-			"style": {
-				"navigationBarTitleText": "商品模板"
-			}
-		},
-		{
-			"path" : "pages/company/company",
-			"style" : 
-			{
-				"navigationBarTitleText" : "企业管理"
-			}
-		},
-		{
-			"path" : "pages/company/company/create",
-			"style" : 
-			{
-				"navigationBarTitleText" : "企业创建"
-			}
-		},
-    {
-    	"path" : "pages/company/company/detail",
-    	"style" : 
-    	{
-    		"navigationBarTitleText" : "企业详情"
-    	}
-    },
-    {
-    	"path" : "pages/company/company/update",
-    	"style" : 
-    	{
-    		"navigationBarTitleText" : "企业修改"
-    	}
-    },
-    {
-    	"path" : "pages/company/commodity/create",
-    	"style" : 
-    	{
-    		"navigationBarTitleText" : "企业商品创建"
-    	}
-    },
-    {
-    	"path" : "pages/company/commodity/update",
-    	"style" : 
-    	{
-    		"navigationBarTitleText" : "企业商品修改"
-    	}
-    },
-    {
-    	"path" : "pages/company/commodity/detail",
-    	"style" : 
-    	{
-    		"navigationBarTitleText" : "企业商品详情"
-    	}
-    },
-    {
-    	"path" : "pages/company/commodity/import",
-    	"style" : 
-    	{
-    		"navigationBarTitleText" : "企业商品导入"
-    	}
-    },
-    {
-    	"path" : "pages/company/commodity",
-    	"style" : 
-    	{
-    		"navigationBarTitleText" : "企业商品"
-    	}
-    },
-    {
-      "path": "pages/demo/demo",
-      "style": {
-        "navigationBarTitleText": "测试"
-      }
-    },
-    {
-      "path": "pages/purchase/purchase",
-      "style": {
-        "navigationBarTitleText": "采购列表"
-      }
-    },
-    {
-      "path": "pages/purchase/batch/create",
-      "style": {
-        "navigationBarTitleText": "创建采购"
-      }
-    }
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	},
-	"uniIdRouter": {}
+    "uniIdRouter": {}
 }

@@ -14,7 +14,7 @@ type PurchaseGoods struct {
 	// CreatedAt 创建时间
 	CreatedAt time.Time `json:"created_at" xorm:"created 'created_at'"`
 	// PurchaseID 采购标识
-	PurchaseID string `json:"purchase_id" xorm:"char(36) unique not null 'purchase_id'"`
+	PurchaseID string `json:"purchase_id" xorm:"char(36) not null 'purchase_id'"`
 	// PurchaseName 采购名称
 	PurchaseName string `json:"purchase_name" xorm:"varchar(200) 'purchase_name'" cfpx:"name"`
 	// Goods 商品信息

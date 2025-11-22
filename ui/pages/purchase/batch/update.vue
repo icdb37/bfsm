@@ -81,6 +81,7 @@
     let expenseIndex = -1;
     let purchaseURL = `${BaseURL}/api/v1/purchase`; // 页面加装时初始化
     let companyURL = `${BaseURL}/api/v1/company`; // 页面加装时初始化
+    let batchID = '';
 
     const popupTip = ref(null);
     const tip = ref({
@@ -124,7 +125,6 @@
         batch.value.companies.splice(pos, 1);
     }
 
-
     function onAddExpense() {
         expenseIndex = -1;
         expense.value = new PurchaseExpense();
@@ -141,10 +141,10 @@
     }
 
     function onAddExpenseConfirm() {
-        popupExpense.value.close();
         if (expenseIndex == -1) {
             batch.value.extras.push({ ...expense.value });
         }
+        popupExpense.value.close();
     }
 
     function onAddExpenseCancel() {
@@ -153,8 +153,8 @@
 
     function submit() {
         uni.request({
-            url: purchaseURL + "/batch",
-            method: 'POST',
+            url: purchaseURL + "/batch/" + batchID,
+            method: 'PUT',
             data: batch.value,
             success: (res) => {
                 console.log("success", res)
@@ -175,14 +175,27 @@
             }
         })
     }
+    function getDetail(id : string) {
+        uni.request({
+            url: purchaseURL + "/batch/" + id,
+            method: 'GET',
+            success: (res) => {
+                batch.value = { ...res.data };
+            }
+        })
+    }
 
     function cancel() {
         uni.navigateBack();
     }
     onLoad((options) => {
-        console.log(options);
         purchaseURL = `${BaseURL}/api/v1/purchase`;
         companyURL = `${BaseURL}/api/v1/company`;
+        batchID = "4525b2ac-5b04-4b1c-9ab9-a9a091d7f1b6";
+        if (options.id) {
+            batchID = options.id;
+        }
+        getDetail(batchID);
     })
 </script>
 

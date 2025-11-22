@@ -25,6 +25,7 @@ type BatchServer interface {
 // GoodsServer - 商品服务接口
 type GoodsServer interface {
 	Search(ctx context.Context, req *coModel.SearchRequest[model.QueryPurchaseGoods]) (resp *coModel.SearchResponse[model.PurchaseGoods], err error)
+	Get(ctx context.Context, id string) (resp *model.PurchaseGoods, err error)
 }
 
 func Provide() {

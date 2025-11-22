@@ -34,5 +34,6 @@ func registGoods(e *echo.Echo, s service.GoodsServer) {
 	g := e.Group("/api/v1/purchase/goods")
 	{
 		g.POST("/search", u.search)
+		g.GET("/:id", u.get)
 	}
 }

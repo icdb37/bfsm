@@ -1,69 +1,55 @@
 <template>
-	<view>
-		<Demo1 />
-	</view>
-	<view>
-		<button type="primary" @click="onPrint">测试</button>
-		<scroll-view scroll-y="true" class="scroll-Y">
-			<uni-list class="scroll-Y">
-				<uni-list-item v-for="(item,index) in listItems" :key="index" 
-					:title="item.getTitle()"
-					:note="item.getNote()"
-					:showSwitch="true" :switchChecked="false"
-					@switchChange="onSwitchChange($event,index)"></uni-list-item>
-			</uni-list>
-		</scroll-view>
-		<view class="bottom-list-button ">
-		<button type="default" @click="onCancel">取消</button>
-		<button type="primary" @click="onSubmit">提交</button>
-		</view>
-	</view>
+    <view>
+        <infra-select :localdata="localdata" @choose="onChoose"></infra-select>
+        <label>====================</label>
+    </view>
 </template>
 
 <script lang="ts" setup>
-	import Demo1 from './demo1';
-	import { ref } from 'vue';
-	import {examples,ListSelecter} from './model';
-	import {onLoad} from '@dcloudio/uni-app';
+    import { ref } from 'vue';
 
-	const checkedItems = ref<number[]>([]);
-	const listItems = ref<ListSelecter[]>([]);
-
-	function onSwitchChange(e : { value : boolean }, checkedIndex : number) {
-		console.log(e, checkedIndex);
-		let posExists = -1;
-		for (let i = 0; i < checkedItems.value.length; i++) {
-			if (checkedIndex == checkedItems.value[i]) {
-				posExists = i;
-				break;
-			}
-		}
-		if (e.value && posExists == -1) {
-			checkedItems.value.push(checkedIndex)
-		} else if (!e.value && posExists != -1) {
-			checkedItems.value.splice(posExists, 1)
-		}
-	}
-	function onPrint() {
-		console.log("checkedItems", checkedItems.value.join(","));
-	}
-	function onSubmit() {
-		console.log("checkedItems", checkedItems.value.join(","));
-	}
-	function onCancel(){
-		
-	}
-onLoad(() => {
-	listItems.value = examples;
-})
+    function onChoose(item : {value:string, text:string}) {
+        console.log(item.value);
+    }
+    const localdata = ref([
+        {
+            text: "修改",
+            value: "aaa",
+            disabled: true,
+        }, {
+            text: "创建",
+            value: "bbb"
+        }
+    ])
 </script>
 
 <style>
-	.scroll-Y {
-		height: 300px;
-	}
+    .more-wrapper {
+        position: relative;
+        display: inline-block;
+    }
 
-	.bottom-list-button {
-		display: flex;
-	}
+    .dropdown-btn {
+        height: 30px;
+        background-color: azure;
+        display: flex;
+        align-items: center;
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 8px;
+        z-index: 1000;
+        background-color: #fff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-radius: 6px;
+        max-width: 160px;
+        overflow: hidden;
+    }
+
+    .page {
+        padding: 12px;
+    }
 </style>

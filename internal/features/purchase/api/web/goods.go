@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/icdb37/bfsm/internal/constx/field"
 	"github.com/icdb37/bfsm/internal/features/purchase/model"
 	"github.com/icdb37/bfsm/internal/features/purchase/service"
 	"github.com/icdb37/bfsm/internal/infra/logx"
@@ -28,4 +29,16 @@ func (h *goodsHandler) search(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, resp)
+}
+
+// Get 获取商品
+func (h *goodsHandler) get(c echo.Context) error {
+	id := c.Param(field.ID)
+	ctx := c.Request().Context()
+	info, err := h.s.Get(ctx, id)
+	if err != nil {
+		logx.Error("get purchase goods failed", "id", id, "error", err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, info)
 }
